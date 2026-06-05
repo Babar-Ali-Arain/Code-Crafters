@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { Code2, Linkedin, MessageCircle } from 'lucide-react';
 import { COMPANY_NAME, COMPANY_TAGLINE, NAV_LINKS } from '../../lib/constants';
+import LegalModal, { PrivacyContent, TermsContent } from './LegalModal';
 
 export default function Footer() {
+  const [modalType, setModalType] = useState<'privacy' | 'terms' | null>(null);
+
   return (
     <footer className="bg-navy border-t border-white/5 pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,12 +52,18 @@ export default function Footer() {
              &copy; {new Date().getFullYear()} {COMPANY_NAME} Technologies. All rights reserved.
            </p>
            <div className="flex gap-6 text-xs text-gray-500">
-             <a href="#" className="hover:text-gray-300">Privacy Policy</a>
-             <a href="#" className="hover:text-gray-300">Terms of Service</a>
+             <button onClick={() => setModalType('privacy')} className="hover:text-gray-300 transition-colors cursor-pointer">Privacy Policy</button>
+             <button onClick={() => setModalType('terms')} className="hover:text-gray-300 transition-colors cursor-pointer">Terms of Service</button>
            </div>
         </div>
 
       </div>
+      <LegalModal 
+        isOpen={modalType !== null} 
+        onClose={() => setModalType(null)} 
+        title={modalType === 'privacy' ? 'Privacy Policy' : 'Terms of Service'}
+        content={modalType === 'privacy' ? <PrivacyContent /> : <TermsContent />}
+      />
     </footer>
   );
 }
