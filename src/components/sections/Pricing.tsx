@@ -8,14 +8,14 @@ const PACKAGES = [
     pkr: '56,000',
     popular: false,
     features: [
-      'Professional School Website',
+      'Professional Business/School Website',
       'Admin Dashboard',
-      'Student Management',
-      'Teacher Management',
+      'User / Student Management',
+      'Staff Management',
       'News & Events',
       'Gallery',
-      'Basic Result Management',
-      'Marksheet Printing',
+      'Basic Record Management',
+      'Document / Marksheet Printing',
       'Firebase Integration',
       'Mobile Responsive Design'
     ],
@@ -29,12 +29,12 @@ const PACKAGES = [
     features: [
       'Everything in Basic',
       'Attendance Management',
-      'Class Management',
-      'Section Management',
-      'Advanced Result System',
-      'Custom Marksheet Design',
-      'PDF Result Download',
-      'Fee Records Management',
+      'Department / Class Management',
+      'Section / Group Management',
+      'Advanced Reporting System',
+      'Custom Document Design',
+      'PDF Document Download',
+      'Ledger & Fee Records',
       'Dashboard Analytics',
       'Notice Board System'
     ],
@@ -48,13 +48,13 @@ const PACKAGES = [
     isPremium: true,
     features: [
       'Everything in Standard',
-      'Student Portal',
-      'Teacher Portal',
-      'Parent Portal',
-      'Online Admissions',
+      'Client / Student Portal',
+      'Employee / Teacher Portal',
+      'Admin / Parent Portal',
+      'Online Admissions / Onboarding',
       'QR Verification System',
       'ID Card Generation',
-      'Advanced Reports',
+      'Advanced Custom Reports',
       'Excel & PDF Export',
       'Performance Analytics',
       'Priority Support'
@@ -72,9 +72,9 @@ export default function Pricing() {
         
         <div className="text-center max-w-3xl mx-auto mb-16">
           <h2 className="text-sm font-bold tracking-widest text-electric uppercase mb-4">Investment Plans</h2>
-          <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">School Management Packages</h3>
+          <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Management Software Packages</h3>
           <p className="text-gray-400 text-lg">
-            Transparent pricing focused on delivering massive value to your institution.
+            Transparent pricing focused on delivering massive value to your organization.
           </p>
         </div>
 

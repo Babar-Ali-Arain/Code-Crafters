@@ -13,7 +13,7 @@ export default function Footer() {
                 <span className="font-display font-bold text-xl">{COMPANY_NAME}</span>
              </div>
              <p className="text-gray-400 text-sm max-w-xs leading-relaxed">
-               {COMPANY_TAGLINE} Providing state-of-the-art school management systems and scalable digital platforms.
+               {COMPANY_TAGLINE} Providing state-of-the-art custom software, management systems and scalable digital platforms.
              </p>
           </div>
 

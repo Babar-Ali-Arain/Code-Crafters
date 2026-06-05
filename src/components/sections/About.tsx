@@ -3,8 +3,8 @@ import { Target, Users, Zap, CheckCircle2 } from 'lucide-react';
 
 const STATS = [
   { value: "50+", label: "Projects Completed", icon: Zap },
-  { value: "30+", label: "Schools Served", icon: Target },
-  { value: "25k+", label: "Students Managed", icon: Users },
+  { value: "30+", label: "Clients Served", icon: Target },
+  { value: "25k+", label: "Users Managed", icon: Users },
   { value: "99%", label: "Client Satisfaction", icon: CheckCircle2 },
 ];
 
@@ -21,11 +21,11 @@ export default function About() {
             className="space-y-6"
           >
             <h2 className="text-sm font-bold tracking-widest text-electric uppercase">Who We Are</h2>
-            <h3 className="text-3xl md:text-4xl font-display font-bold">Empowering Education Through Technology</h3>
+            <h3 className="text-3xl md:text-4xl font-display font-bold">Empowering Businesses & Education Through Technology</h3>
             <p className="text-gray-400 text-lg leading-relaxed">
               Code Crafters is a software development company providing custom web applications, management systems, websites, mobile applications, graphic design, and digital transformation solutions. 
               <br/><br/>
-              We successfully help educational institutions modernize their operations through secure, scalable, and intuitive technology.
+              We successfully help businesses and educational institutions modernize their operations through secure, scalable, and intuitive technology.
             </p>
           </motion.div>
 

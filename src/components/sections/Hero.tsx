@@ -17,15 +17,15 @@ export default function Hero() {
         >
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 w-fit">
             <span className="w-2 h-2 rounded-full bg-electric animate-pulse" />
-            <span className="text-sm font-medium text-gray-300">Modern SaaS for Education</span>
+            <span className="text-sm font-medium text-gray-300">Modern SaaS for Business & Education</span>
           </div>
           
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-display font-bold leading-tight">
-            Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-blue-500">School</span> into a Smart Digital Campus
+            Transform Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric to-golden">Business & School</span> with Smart Digital Solutions
           </h1>
           
           <p className="text-lg text-gray-400 max-w-xl leading-relaxed">
-            Code Crafters develops modern School Management Systems that simplify administration, student records, attendance, fee management, results, and communication.
+            Code Crafters develops modern Custom Software, Management Systems, and Digital Solutions that simplify administration, operations, workflow, and communication.
           </p>
           
           <div className="flex flex-col sm:flex-row flex-wrap gap-4 pt-4">
@@ -76,9 +76,9 @@ export default function Hero() {
                   {/* Top Stats */}
                   <div className="grid grid-cols-3 gap-2 sm:gap-4">
                     {[
-                      { l: 'Total Students', v: '1,240', c: 'from-blue-500/20 to-blue-500/5' },
-                      { l: 'Attendance', v: '94%', c: 'from-electric/20 to-electric/5' },
-                      { l: 'Revenue collected', v: 'PKR 2.4M', c: 'from-purple-500/20 to-purple-500/5' }
+                      { l: 'Total Active Users', v: '12,240', c: 'from-blue-500/20 to-blue-500/5' },
+                      { l: 'Engagement', v: '94%', c: 'from-electric/20 to-electric/5' },
+                      { l: 'Revenue Processed', v: 'PKR 24M', c: 'from-purple-500/20 to-purple-500/5' }
                     ].map((stat, i) => (
                       <div key={i} className={`p-4 rounded-xl bg-gradient-to-br ${stat.c} border border-white/5`}>
                         <div className="text-[10px] sm:text-xs text-gray-400 mb-1">{stat.l}</div>

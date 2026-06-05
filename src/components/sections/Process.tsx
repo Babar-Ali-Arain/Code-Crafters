@@ -1,8 +1,8 @@
 import { motion } from 'motion/react';
 
 const PROCESS_STEPS = [
-  { step: '01', title: 'Requirement Discussion', desc: 'We analyze your school\'s specific needs and operational blockers.' },
-  { step: '02', title: 'UI/UX Design', desc: 'Creating intuitive layouts ensuring staff and parents enjoy using the system.' },
+  { step: '01', title: 'Requirement Discussion', desc: 'We analyze your specific needs and operational blockers.' },
+  { step: '02', title: 'UI/UX Design', desc: 'Creating intuitive layouts ensuring staff and customers enjoy using the system.' },
   { step: '03', title: 'Development', desc: 'Secure coding using React, Next.js, and Firebase scalable architecture.' },
   { step: '04', title: 'Testing', desc: 'Rigorous security, speed, and usability testing before hand-off.' },
   { step: '05', title: 'Deployment', desc: 'Smooth launching to live servers with zero downtime for your operations.' },

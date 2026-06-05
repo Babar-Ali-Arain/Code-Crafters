@@ -11,9 +11,9 @@ export default function Contact() {
           <div className="space-y-8">
             <div>
               <h2 className="text-sm font-bold tracking-widest text-electric uppercase mb-4">Get In Touch</h2>
-              <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Let's Digitize Your Institution</h3>
+              <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Let's Digitize Your Organization</h3>
               <p className="text-gray-400 text-lg mb-8">
-                Ready to upgrade your school's management? Reach out for a free consultation and personalized proposal.
+                Ready to upgrade your organization's management? Reach out for a free consultation and personalized proposal.
               </p>
             </div>
 

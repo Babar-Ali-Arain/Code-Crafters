@@ -4,10 +4,10 @@ import { ChevronDown } from 'lucide-react';
 
 const FAQS = [
   { q: "How long does development take?", a: "A standard setup takes 1-2 weeks. Custom features or the Premium Package may take 3-4 weeks depending on specific requirement complexity." },
-  { q: "Can the system manage thousands of students?", a: "Yes. Our architecture utilizes React and Firebase making it hyper-scalable. It effortlessly supports 10,000+ active students with no performance hit." },
-  { q: "Is Firebase secure?", a: "Absolutely. Firebase is structurally backed by Google Cloud infrastructure. We employ rigid security rules protecting financial and student records." },
-  { q: "Can marksheets be customized?", a: "Yes! Marksheets are fully customized matching your school logo, specific examination grading logic, and brand colors before printing." },
-  { q: "Is training provided?", a: "Yes, comprehensive training sessions for admins and teaching staff are included in all packages." },
+  { q: "Can the system manage thousands of users?", a: "Yes. Our architecture utilizes React and Firebase making it hyper-scalable. It effortlessly supports 10,000+ active users with no performance hit." },
+  { q: "Is Firebase secure?", a: "Absolutely. Firebase is structurally backed by Google Cloud infrastructure. We employ rigid security rules protecting financial and user records." },
+  { q: "Can documents and reports be customized?", a: "Yes! Any reports, invoices, or marksheets are fully customized matching your brand logo, specific logic, and brand colors before printing." },
+  { q: "Is training provided?", a: "Yes, comprehensive training sessions for admins and staff are included in all packages." },
   { q: "Can we add new features later?", a: "Definitely. The software is modular. You can start with basic functionality and we can scale/add modules like QR tracking later." },
 ];
 

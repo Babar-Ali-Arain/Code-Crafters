@@ -2,14 +2,14 @@ import { motion } from 'motion/react';
 import { ShieldCheck, Zap, Laptop, Smartphone, Maximize, DollarSign, Headset, Code } from 'lucide-react';
 
 const REASONS = [
-  { icon: ShieldCheck, title: 'Secure Firebase Backend', desc: 'Google-grade security protecting sensitive student and financial data.' },
+  { icon: ShieldCheck, title: 'Secure Firebase Backend', desc: 'Google-grade security protecting sensitive user and financial data.' },
   { icon: Zap, title: 'Fast Performance', desc: 'Optimized React single-page applications providing instant load times.' },
   { icon: Laptop, title: 'Modern User Experience', desc: 'Microsoft Store inspired clean glassmorphism UI for ease of use.' },
   { icon: Smartphone, title: 'Mobile Friendly', desc: 'Fully responsive designs covering desktop, tablet, and mobile displays.' },
-  { icon: Maximize, title: 'Scalable Architecture', desc: 'Systems built to handle 100 to 100,000+ students effortlessly.' },
+  { icon: Maximize, title: 'Scalable Architecture', desc: 'Systems built to handle 100 to 100,000+ users effortlessly.' },
   { icon: DollarSign, title: 'Affordable Pricing', desc: 'High-end corporate software without the enterprise price tag.' },
   { icon: Headset, title: 'Professional Support', desc: 'Dedicated account managers providing rapid issue resolution.' },
-  { icon: Code, title: 'Custom Development', desc: 'Tailored features specifically built to match your unique school workflows.' },
+  { icon: Code, title: 'Custom Development', desc: 'Tailored features specifically built to match your unique operational workflows.' },
 ];
 
 export default function WhyUs() {
@@ -21,7 +21,7 @@ export default function WhyUs() {
            <h2 className="text-sm font-bold tracking-widest text-electric uppercase mb-4">The Code Crafters Advantage</h2>
            <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Why Choose Us</h3>
            <p className="text-gray-400 text-lg">
-             We don't just build software. We engineer scalable operational success for your school.
+             We don't just build software. We engineer scalable operational success for your organization.
            </p>
         </div>
 

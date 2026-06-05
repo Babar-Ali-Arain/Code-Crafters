@@ -4,14 +4,14 @@ import {
 } from 'lucide-react';
 
 const CORE_FEATURES = [
-  { title: "Student Records", icon: Users, desc: "Comprehensive profiles with academic history, health info, and documents." },
-  { title: "Attendance Tracking", icon: CalendarCheck, desc: "Daily biometric, QR, or manual attendance with automated SMS alerts." },
-  { title: "Fee Management", icon: CreditCard, desc: "Automated vouchers, online payment gateways, and defaulter tracking." },
-  { title: "Result Management", icon: Award, desc: "Dynamic grading structures, weighted exams, and term aggregation." },
-  { title: "Marksheet Generation", icon: FileText, desc: "Beautiful, printable marksheets customized to your school’s brand." },
-  { title: "Teacher Management", icon: UserPlus, desc: "Staff attendance, payroll integrations, and subject allocations." },
-  { title: "Online Admissions", icon: Globe, desc: "Web portals for prospective parents to apply and submit documents." },
-  { title: "Reports & Analytics", icon: PieChart, desc: "Visual dashboards showing financial health and academic performance." },
+  { title: "User / Student Records", icon: Users, desc: "Comprehensive profiles with history, info, and documents." },
+  { title: "Attendance Tracking", icon: CalendarCheck, desc: "Daily biometric, QR, or manual attendance with automated alerts." },
+  { title: "Financial Management", icon: CreditCard, desc: "Automated vouchers, online payment gateways, and ledger tracking." },
+  { title: "Performance Management", icon: Award, desc: "Dynamic grading structures, weighted metrics, and term aggregation." },
+  { title: "Report Generation", icon: FileText, desc: "Beautiful, printable reports/marksheets customized to your brand." },
+  { title: "Staff Management", icon: UserPlus, desc: "Staff attendance, payroll integrations, and role allocations." },
+  { title: "Online Onboarding", icon: Globe, desc: "Web portals for prospective users to apply and submit documents." },
+  { title: "Reports & Analytics", icon: PieChart, desc: "Visual dashboards showing financial health and overall performance." },
 ];
 
 // Resolving import for Globe used above. Add to standard lucide-react import.
@@ -26,7 +26,7 @@ export default function Features() {
            <h2 className="text-sm font-bold tracking-widest text-electric uppercase mb-4">Core Modules</h2>
            <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Features Showcase</h3>
            <p className="text-gray-400 text-lg">
-             Everything you need to successfully run and manage your school in one unified platform.
+             Everything you need to successfully run and manage your organization in one unified platform.
            </p>
         </div>
 

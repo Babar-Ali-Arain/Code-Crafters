@@ -11,9 +11,9 @@ import {
 } from 'lucide-react';
 
 const SERVICES = [
-  { icon: GraduationCap, title: 'School Management Systems', desc: 'End-to-end management software tailored for modern schools.' },
-  { icon: Globe, title: 'Website Development', desc: 'Premium, high-converting websites for your institution.' },
-  { icon: Smartphone, title: 'Mobile App Development', desc: 'Parent, teacher, and student mobile applications.' },
+  { icon: GraduationCap, title: 'Management Systems', desc: 'End-to-end management software tailored for modern organizations & schools.' },
+  { icon: Globe, title: 'Website Development', desc: 'Premium, high-converting websites for your brand or institution.' },
+  { icon: Smartphone, title: 'Mobile App Development', desc: 'Cross-platform mobile applications serving your key users efficiently.' },
   { icon: Layout, title: 'Admin Dashboards', desc: 'Centralized admin controls with deep analytics.' },
   { icon: Palette, title: 'UI/UX Design', desc: 'Beautiful, intuitive user interfaces for maximum usability.' },
   { icon: PenTool, title: 'Graphic Design', desc: 'Branding, ID cards, and marketing materials.' },
@@ -30,7 +30,7 @@ export default function Services() {
           <h2 className="text-sm font-bold tracking-widest text-electric uppercase mb-4">Our Services</h2>
           <h3 className="text-3xl md:text-5xl font-display font-bold mb-6">Comprehensive Digital Solutions</h3>
           <p className="text-gray-400 text-lg">
-            We provide everything your educational institute needs to thrive in the digital age.
+            We provide everything your organization needs to thrive in the digital age.
           </p>
         </div>
 
