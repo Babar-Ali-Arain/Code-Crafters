@@ -88,10 +88,16 @@ export default function ThreeBackground() {
     let animationFrameId: number;
     let mouseX = 0;
     let mouseY = 0;
+    const mouse = new THREE.Vector2(-9999, -9999);
+    const target = new THREE.Vector3();
+    const planeZ = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const raycaster = new THREE.Raycaster();
 
     const handleMouseMove = (event: MouseEvent) => {
-      mouseX = (event.clientX - window.innerWidth / 2) * 0.05;
-      mouseY = (event.clientY - window.innerHeight / 2) * 0.05;
+      mouseX = event.clientX - window.innerWidth / 2;
+      mouseY = event.clientY - window.innerHeight / 2;
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
     };
     window.addEventListener('mousemove', handleMouseMove);
 
@@ -103,11 +109,26 @@ export default function ThreeBackground() {
 
       let lineCount = 0;
 
+      raycaster.setFromCamera(mouse, camera);
+      raycaster.ray.intersectPlane(planeZ, target);
+
       // Update positions for drift
       for (let i = 0; i < particleCount * 3; i += 3) {
         positionsArray[i] += velocities[i];     // X
         positionsArray[i + 1] += velocities[i + 1]; // Y
         positionsArray[i + 2] += velocities[i + 2]; // Z
+
+        if (target) {
+          const dx = positionsArray[i] - target.x;
+          const dy = positionsArray[i + 1] - target.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 150) {
+            const force = (150 - dist) / 150;
+            // Attract towards mouse
+            positionsArray[i] -= (dx / dist) * force * 1.5;
+            positionsArray[i + 1] -= (dy / dist) * force * 1.5;
+          }
+        }
 
         // Bounce back if they go too far
         if (Math.abs(positionsArray[i]) > 400) velocities[i] *= -1;
@@ -140,12 +161,11 @@ export default function ThreeBackground() {
       linesGeometry.setDrawRange(0, lineCount * 2);
       linesGeometry.attributes.position.needsUpdate = true;
 
-      // Smooth camera/particle rotation
-      particles.rotation.x += (mouseY * 0.001 - particles.rotation.x) * 0.05;
-      particles.rotation.y += (mouseX * 0.001 - particles.rotation.y) * 0.05;
-      linesMesh.rotation.x = particles.rotation.x;
-      linesMesh.rotation.y = particles.rotation.y;
-      
+      // Smooth camera parallax
+      camera.position.x += (mouseX * 0.1 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 0.1 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
       // Auto constant rotation
       particles.rotation.y += 0.0005;
       particles.rotation.x += 0.0002;
