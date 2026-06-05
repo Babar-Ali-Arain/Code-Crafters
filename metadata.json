@@ -1,0 +1,6 @@
+{
+  "name": "Code Crafters",
+  "description": "School Management Solutions Website",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
