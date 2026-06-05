@@ -16,10 +16,12 @@ import FAQ from './components/sections/FAQ';
 import Contact from './components/sections/Contact';
 import Footer from './components/layout/Footer';
 import FloatingWhatsApp from './components/layout/FloatingWhatsApp';
+import ThreeBackground from './components/layout/ThreeBackground';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-navy text-white font-sans selection:bg-electric/30 selection:text-white overflow-x-hidden">
+    <div className="min-h-screen text-white font-sans selection:bg-electric/30 selection:text-white overflow-x-hidden relative">
+      <ThreeBackground />
       <Navbar />
       <main>
         <Hero />
