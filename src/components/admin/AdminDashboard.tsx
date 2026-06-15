@@ -21,7 +21,7 @@ import ProfileManagement from './modules/ProfileManagement';
 import { ActivityLog } from './types';
 
 export default function AdminDashboard() {
-  const { user, profile, isAdmin, isTeam, signInWithEmail, signInWithGoogle, logout } = useAuth();
+  const { user, profile, isAdmin, isTeam, signInWithEmail, signInWithGoogle, signOut } = useAuth();
   const navigate = useNavigate();
 
   // Sidebar toggler & current active UI tab
@@ -74,7 +74,7 @@ export default function AdminDashboard() {
         timestamp: serverTimestamp()
       });
     } catch (err) {
-      console.error('Audit writing error:', err);
+      console.warn('Network or permission delay writing audit logs locally.', err);
     }
   };
 
@@ -333,7 +333,7 @@ export default function AdminDashboard() {
 
           <div className="flex flex-col gap-2 pt-2">
             <button 
-              onClick={() => logout().then(() => navigate('/'))}
+              onClick={() => signOut().then(() => navigate('/'))}
               className="py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs"
             >
               Sign Out & Clear Session
@@ -573,7 +573,7 @@ export default function AdminDashboard() {
             <button 
               onClick={() => {
                 logSystemActivity('Session Logged Out', `Admin user logged out manually: ${user.email}`);
-                logout();
+                signOut();
               }}
               className="p-2 bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 rounded-xl transition-all cursor-pointer shrink-0"
               title="Terminate Operational Console Session"
@@ -591,39 +591,44 @@ export default function AdminDashboard() {
       <main className="flex-1 flex flex-col relative z-10 min-h-screen overflow-x-hidden">
         
         {/* TOP STATUS NAVIGATION BAR */}
-        <header className="h-16 md:h-20 border-b border-slate-100 bg-white/95 backdrop-blur-lg px-4 md:px-8 flex justify-between items-center relative z-30 shrink-0 sticky top-0 shadow-sm transition-all duration-300">
+        <header className="h-16 md:h-20 border-b border-slate-200/60 bg-white/80 backdrop-blur-xl px-4 md:px-8 flex justify-between items-center relative z-30 shrink-0 sticky top-0 transition-all duration-300">
           
           <div className="flex items-center gap-3 sm:gap-4 flex-none">
             {/* Mobile Hamburger menu toggle */}
             <button 
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0FA484]/50 active:scale-95"
+              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-all focus:outline-none focus:ring-2 focus:ring-[#0FA484]/50 active:scale-95"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
             {/* Logo for mobile view when sidebar might be closed */}
-            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm block lg:hidden shrink-0">
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm block lg:hidden shrink-0 bg-white">
                <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
             </div>
-            <h1 className="text-[10px] md:text-xs font-mono font-bold uppercase tracking-widest text-[#0FA484] hidden sm:block px-1">Operations Console</h1>
+            <h1 className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-slate-400 hidden sm:block px-2">Operations <span className="text-[#0FA484]">Console</span></h1>
           </div>
 
           {/* Operations row: Global search suggestion engine, Database export click, bell notifications panel */}
-          <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end ml-4">
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 flex-1 justify-end ml-4">
             
             {/* Dynamic Global suggestion search engine */}
-            <div className="relative w-full max-w-[140px] xs:max-w-[180px] sm:max-w-xs md:max-w-md lg:w-[320px] group">
-              <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#0FA484] transition-colors" />
+            <div className="relative w-full max-w-[150px] xs:max-w-[190px] sm:max-w-[240px] md:max-w-md lg:w-[360px] group">
+              <div className="relative flex items-center">
+                <Search className="absolute left-4 w-4 h-4 text-slate-400 group-focus-within:text-[#0FA484] transition-colors duration-300" />
                 <input 
                   type="text" 
                   value={searchString}
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                   onChange={(e) => handleQuerySearchChange(e.target.value)}
-                  placeholder="Search..." 
-                  className="bg-slate-50 hover:bg-slate-100/50 border border-slate-200 text-xs sm:text-sm rounded-full pl-10 pr-4 py-2 sm:py-2.5 w-full text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0FA484] focus:ring-2 focus:ring-[#0FA484]/20 focus:bg-white transition-all shadow-sm" 
+                  placeholder="Search globally..." 
+                  className="bg-slate-100/50 hover:bg-slate-100 border border-transparent focus:border-slate-200 text-xs sm:text-sm rounded-full pl-11 pr-4 py-2 sm:py-2.5 w-full text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-4 focus:ring-[#0FA484]/10 focus:bg-white transition-all shadow-sm" 
                 />
+                {searchString && (
+                  <button onClick={() => setSearchString('')} className="absolute right-3 p-1 hover:bg-slate-200 rounded-full text-slate-400 hover:text-slate-600 transition-colors">
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
               </div>
 
               {/* Suggestions Flyout portal */}
@@ -674,14 +679,13 @@ export default function AdminDashboard() {
             </div>
 
             {/* Instant Excel/CSV Client DB download */}
-            <div className="hidden sm:flex items-center">
+            <div className="hidden md:flex items-center gap-2">
               <button 
                 onClick={handleCSVExport}
-                className="p-2 sm:px-4 sm:py-2 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-[#0FA484] border border-slate-200 hover:border-[#0FA484]/30 rounded-full text-xs font-semibold tracking-wide cursor-pointer flex items-center gap-2 transition-all shadow-sm"
-                title="Export database"
+                className="p-2.5 bg-slate-50 text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 border border-slate-200 hover:border-emerald-200 rounded-full transition-all shadow-sm group/btn focus:outline-none focus:ring-2 focus:ring-emerald-500/20"
+                title="Export database to CSV"
               >
-                <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
-                <span className="hidden lg:inline">Export CSV</span>
+                <FileSpreadsheet className="w-4.5 h-4.5 group-hover/btn:scale-110 transition-transform" />
               </button>
             </div>
 
@@ -689,10 +693,10 @@ export default function AdminDashboard() {
             <div className="relative flex items-center">
               <button 
                 onClick={() => setNotifOpen(!notifOpen)}
-                className="p-2 bg-slate-50 border border-slate-200 rounded-full hover:bg-slate-100 transition-all relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/30 shadow-sm"
+                className={`p-2.5 rounded-full transition-all relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/30 shadow-sm border ${notifOpen ? 'bg-slate-800 text-white border-slate-800' : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900'}`}
               >
-                <Bell className="w-5 h-5 text-slate-600" />
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white absolute top-0 right-0 animate-pulse" />
+                <Bell className="w-4.5 h-4.5" />
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white absolute top-[-2px] right-[-2px] shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse" />
               </button>
 
               <AnimatePresence>
@@ -727,18 +731,23 @@ export default function AdminDashboard() {
             {/* Profile Picture & User Info in Top Nav */}
             <div 
               onClick={() => setActiveTab('profile')}
-              className="flex items-center gap-3 pl-3 sm:pl-5 border-l border-slate-200 ml-1 sm:ml-2 cursor-pointer hover:bg-slate-50 rounded-xl p-1 pr-2 transition-colors group"
+              className="flex items-center gap-3 pl-3 sm:pl-5 border-l border-slate-200/80 ml-1 sm:ml-2 cursor-pointer hover:bg-slate-50 rounded-2xl p-1.5 pr-3 transition-colors group focus-within:ring-2 focus-within:ring-[#0FA484]/20"
+              role="button"
+              tabIndex={0}
             >
-               <div className="hidden md:block text-right leading-tight">
-                  <h4 className="text-[11px] font-bold text-slate-800 truncate max-w-[120px] lg:max-w-[150px] group-hover:text-[#0FA484] transition-colors">{profile?.name || 'Administrator'}</h4>
-                  <span className="text-[9px] text-[#0FA484] font-mono font-bold uppercase tracking-widest">{isAdmin ? 'Admin' : 'Team Member'}</span>
+               <div className="hidden lg:block text-right leading-tight min-w-[100px]">
+                  <h4 className="text-[12px] font-bold text-slate-800 truncate group-hover:text-[#0FA484] transition-colors">{profile?.name || user?.displayName || 'Administrator'}</h4>
+                  <span className="text-[9px] text-slate-500 font-mono font-bold uppercase tracking-widest">{isAdmin ? 'Super Admin' : 'Team Member'}</span>
                </div>
-               <img 
-                 src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
-                 alt="Avatar" 
-                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 shadow-sm shrink-0 group-hover:border-[#0FA484] transition-all duration-300" 
-               />
-               <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0FA484] transition-colors hidden sm:block" />
+               <div className="relative">
+                 <img 
+                   src={profile?.photoURL || user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
+                   alt="Avatar" 
+                   className="w-9 h-9 sm:w-10 sm:h-10 rounded-full border-2 border-white shadow-sm shrink-0 group-hover:border-[#0FA484]/20 object-cover bg-slate-100 transition-all duration-300" 
+                 />
+                 <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#0FA484] border-2 border-white rounded-full"></span>
+               </div>
+               <ChevronDown className="w-4 h-4 text-slate-400 group-hover:text-[#0FA484] transition-colors hidden sm:block" />
             </div>
           </div>
 
