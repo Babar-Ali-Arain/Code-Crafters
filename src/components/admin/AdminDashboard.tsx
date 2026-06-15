@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, ReactNode, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { 
   ShieldCheck, LayoutDashboard, Users, FolderGit2, Sparkles, Terminal, LogOut, 
   Menu, X, Bell, Search, Globe, ChevronDown, Award, Calendar, FolderOpen,
@@ -298,9 +298,9 @@ export default function AdminDashboard() {
           </button>
           
           <div className="text-center mt-6">
-            <a href="/" className="text-slate-400 hover:text-slate-700 transition-colors text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-1.5">
+            <Link to="/" className="text-slate-400 hover:text-slate-700 transition-colors text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-1.5">
               <span>← Return to Public Workspace</span>
-            </a>
+            </Link>
           </div>
 
         </motion.div>

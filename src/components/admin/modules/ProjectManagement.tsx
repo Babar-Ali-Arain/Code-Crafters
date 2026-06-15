@@ -179,49 +179,45 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
   });
 
   return (
-    <div className="space-y-8 text-white">
+    <div className="space-y-8 text-slate-800 font-sans pb-10">
       
-      {/* Title */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-display font-semibold text-white">Project Workflows</h2>
-          <p className="text-gray-400 text-xs text-sans font-normal">Document engineering sprints, manage client deliverables, and control landing-page portfolio showcasing.</p>
+          <h2 className="text-2xl font-display font-semibold text-slate-800">Project Workflows</h2>
+          <p className="text-slate-500 text-xs font-normal">Document engineering sprints, manage client deliverables, and control landing-page portfolio showcasing.</p>
         </div>
 
         <button
           onClick={openAddForm}
-          className="px-5 py-2.5 bg-electric hover:bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-[0_4px_15px_rgba(0,240,255,0.2)] active:scale-95"
+          className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Add New Project</span>
         </button>
       </div>
 
-      {/* Control bar & Category Filter */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+      <div className="flex flex-col md:flex-row gap-5 items-center justify-between bg-white p-5 rounded-[24px] border border-slate-100/60 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
         
-        {/* Search */}
         <div className="relative w-full md:w-80">
-          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search projects, stack, technologies..."
-            className="w-full bg-[#050b14]/55 border border-white/5 rounded-xl pl-10 pr-4 py-2.5 text-xs text-white focus:outline-none focus:border-electric font-sans"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-[#4f46e5] font-sans transition-colors"
           />
         </div>
 
-        {/* Categories Scroller */}
-        <div className="flex gap-1 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 font-mono text-[10px]">
+        <div className="flex gap-2 overflow-x-auto w-full md:w-auto pb-2 md:pb-0 font-mono text-[10px] hide-scrollbar">
           {categoriesList.map(c => (
             <button
               key={c}
               onClick={() => setActiveCategory(c)}
-              className={`px-3.5 py-2 rounded-xl border whitespace-nowrap uppercase tracking-wider transition-all ${
+              className={`px-4 py-2.5 rounded-xl border whitespace-nowrap uppercase tracking-wider transition-all font-bold shadow-sm ${
                 activeCategory === c
-                  ? 'bg-electric/15 border-electric text-electric font-bold'
-                  : 'bg-white/[0.01] border-white/5 text-gray-400 hover:text-white'
+                  ? 'bg-[#4f46e5] border-[#4f46e5] text-white'
+                  : 'bg-white border-slate-200 text-slate-500 hover:text-slate-800 hover:bg-slate-50'
               }`}
             >
               {c}
@@ -231,14 +227,13 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
 
       </div>
 
-      {/* Grid of Projects */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full text-center py-24 text-gray-500 text-xs">
+          <div className="col-span-full text-center py-24 text-slate-400 text-xs">
             Analyzing database portfolio documents...
           </div>
         ) : filtered.length === 0 ? (
-          <div className="col-span-full text-center py-24 border border-dashed border-white/5 rounded-3xl text-gray-500 text-xs">
+          <div className="col-span-full text-center py-24 border border-dashed border-slate-200 bg-slate-50 rounded-3xl text-slate-500 text-xs shadow-sm">
             No projects matched current search tags. Begin by publishing your first showcase!
           </div>
         ) : (
@@ -246,111 +241,102 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
             return (
               <div 
                 key={p.id}
-                className="rounded-3xl border border-white/5 bg-[#050b14]/40 hover:bg-[#071324] hover:border-white/10 overflow-hidden transition-all flex flex-col justify-between group"
+                className="rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-[#4f46e5]/20 overflow-hidden transition-all flex flex-col justify-between group"
               >
-                {/* Thumb Banner image with overlay widgets */}
-                <div className="h-44 relative bg-slate-900 overflow-hidden">
+                <div className="h-48 relative bg-slate-100 overflow-hidden border-b border-slate-100">
                   <img 
                     src={p.projectImages || 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600'} 
                     alt={p.projectName} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     referrerPolicy="no-referrer"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#050b14] via-transparent to-black/30" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-black/20" />
                   
-                  {/* Category Pill */}
-                  <span className="absolute top-4 left-4 bg-navy/80 border border-white/10 text-white font-mono text-[9px] font-bold px-2.5 py-1 rounded-full uppercase">
+                  <span className="absolute top-4 left-4 bg-white/95 backdrop-blur-sm border border-slate-200 text-slate-700 font-mono text-[9px] font-bold px-3 py-1.5 rounded-full uppercase shadow-sm">
                     {p.category}
                   </span>
 
-                  {/* Highlight indicators */}
-                  <div className="absolute top-4 right-4 flex gap-1.5">
+                  <div className="absolute top-4 right-4 flex gap-2">
                     
-                    {/* Featured Star */}
                     <button
                       onClick={() => toggleFeaturedStatus(p)}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shadow-sm backdrop-blur-sm ${
                         p.featured 
-                          ? 'bg-amber-400/20 border-amber-400 text-amber-300' 
-                          : 'bg-black/40 border-white/10 text-gray-400 hover:text-white'
+                          ? 'bg-amber-400 border-amber-500 text-white' 
+                          : 'bg-white/90 border-slate-200 text-slate-500 hover:text-slate-700'
                       }`}
                       title={p.featured ? "Featured showcase on landing" : "Promote project to featured"}
                     >
                       ★
                     </button>
 
-                    {/* Visibility Switch */}
                     <button
                       onClick={() => togglePublishStatus(p)}
-                      className={`w-7 h-7 rounded-full flex items-center justify-center border transition-all ${
+                      className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all shadow-sm backdrop-blur-sm ${
                         p.published 
-                          ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400' 
-                          : 'bg-rose-500/15 border-rose-500/30 text-rose-400'
+                          ? 'bg-emerald-500 border-emerald-600 text-white' 
+                          : 'bg-rose-500 border-rose-600 text-white'
                       }`}
                       title={p.published ? "Active live visualization" : "Invisible draft mode"}
                     >
-                      {p.published ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                      {p.published ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                     </button>
 
                   </div>
 
-                  {/* Status Indicator bottom-left overlay */}
-                  <div className="absolute bottom-4 left-4 flex gap-1 items-center bg-[#050b14]/90 border border-white/10 rounded-full px-2.5 py-0.5 text-[8px] font-mono uppercase font-bold text-gray-300">
+                  <div className="absolute bottom-4 left-4 flex gap-1.5 items-center bg-white/95 backdrop-blur-md border border-slate-200 rounded-full px-3 py-1 text-[9px] font-mono uppercase font-bold text-slate-700 shadow-sm">
                     {p.projectStatus === 'completed' ? (
                       <>
-                        <CheckCircle className="w-3 h-3 text-emerald-400 mr-0.5" />
-                        <span className="text-emerald-400">Completed</span>
+                        <CheckCircle className="w-3.5 h-3.5 text-emerald-500 mr-0.5" />
+                        <span className="text-emerald-700">Completed</span>
                       </>
                     ) : p.projectStatus === 'in_progress' ? (
                       <>
-                        <Clock className="w-3 h-3 text-[#00E5FF] mr-0.5" />
-                        <span className="text-[#00E5FF]">Engineering</span>
+                        <Clock className="w-3.5 h-3.5 text-blue-500 mr-0.5" />
+                        <span className="text-blue-700">Engineering</span>
                       </>
                     ) : (
                       <>
-                        <AlertTriangle className="w-3 h-3 text-amber-400 mr-0.5" />
-                        <span className="text-amber-400">Pipeline</span>
+                        <AlertTriangle className="w-3.5 h-3.5 text-amber-500 mr-0.5" />
+                        <span className="text-amber-700">Pipeline</span>
                       </>
                     )}
                   </div>
 
                 </div>
 
-                <div className="p-5 flex-grow flex flex-col justify-between space-y-4">
+                <div className="p-6 flex-grow flex flex-col justify-between space-y-5">
                   
                   <div className="space-y-2">
                     <div className="flex justify-between items-start gap-2">
-                      <h3 className="text-sm font-bold text-white font-display leading-tight">{p.projectName}</h3>
+                      <h3 className="text-lg font-bold text-slate-800 font-display leading-tight">{p.projectName}</h3>
                     </div>
-                    <p className="text-gray-400 text-xs line-clamp-3 leading-relaxed">
+                    <p className="text-slate-500 text-xs line-clamp-3 leading-relaxed font-medium">
                       {p.description}
                     </p>
                   </div>
 
-                  {/* Specs labels */}
-                  <div className="space-y-3 font-mono text-[10px]">
+                  <div className="space-y-4 font-mono text-[10px]">
                     
-                    {/* Tech Badges */}
-                    <div className="flex flex-wrap gap-1">
+                    <div className="flex flex-wrap gap-1.5">
                       {p.technologies.slice(0, 4).map((tech, i) => (
-                        <span key={i} className="bg-white/[0.03] border border-white/5 text-gray-400 px-2 py-0.5 rounded">
+                        <span key={i} className="bg-slate-50 border border-slate-200 text-slate-600 px-2 py-1 rounded-lg font-bold shadow-sm">
                           {tech}
                         </span>
                       ))}
                       {p.technologies.length > 4 && (
-                        <span className="text-gray-500 pl-1">+{p.technologies.length - 4}</span>
+                        <span className="text-slate-400 pl-1 font-bold flex items-center">+{p.technologies.length - 4}</span>
                       )}
                     </div>
 
-                    {/* Metadata line */}
-                    <div className="grid grid-cols-2 gap-2 border-t border-white/5 pt-3 text-gray-500">
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-100 pt-4 text-slate-500">
                       <div>
-                        <span className="text-[9px] text-gray-600 block uppercase">CLIENT ACCOUNTS</span>
-                        <span className="text-gray-300 truncate block mt-0.5 font-bold">{p.clientName || 'Internal Sprints'}</span>
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase">CLIENT ACCOUNTS</span>
+                        <span className="text-slate-700 truncate block mt-1 font-bold">{p.clientName || 'Internal Sprints'}</span>
                       </div>
                       <div>
-                        <span className="text-[9px] text-gray-600 block uppercase">DELIVERED</span>
-                        <span className="text-gray-400 block mt-0.5 font-medium">{p.completionDate || 'Planned'}</span>
+                        <span className="text-[9px] text-slate-400 font-bold block uppercase">DELIVERED</span>
+                        <span className="text-slate-600 block mt-1 font-bold">{p.completionDate || 'Planned'}</span>
                       </div>
                     </div>
 
@@ -358,20 +344,18 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
 
                 </div>
 
-                {/* Command Bar */}
-                <div className="p-4 border-t border-white/5 bg-white/[0.01] flex items-center justify-between">
+                <div className="p-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between rounded-b-[32px]">
                   
-                  {/* Hyperlinks */}
                   <div className="flex gap-2">
                     {p.liveUrl && p.liveUrl !== 'https://' && (
                       <a 
                         href={p.liveUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-slate-500 hover:text-[#4f46e5] bg-white border border-slate-200 p-2 rounded-xl shadow-sm transition-colors"
                         title="Live Site"
                       >
-                        <LinkIcon className="w-3.5 h-3.5" />
+                        <LinkIcon className="w-4 h-4" />
                       </a>
                     )}
                     {p.githubUrl && p.githubUrl !== 'https://github.com/' && (
@@ -379,30 +363,29 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
                         href={p.githubUrl} 
                         target="_blank" 
                         rel="noreferrer" 
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-slate-500 hover:text-slate-900 bg-white border border-slate-200 p-2 rounded-xl shadow-sm transition-colors"
                         title="Repository"
                       >
-                        <Github className="w-3.5 h-3.5" />
+                        <Github className="w-4 h-4" />
                       </a>
                     )}
                   </div>
 
-                  {/* Actions */}
-                  <div className="flex gap-1 p-0.5 rounded-lg">
+                  <div className="flex gap-2">
                     <button
                       onClick={() => openEditForm(p)}
-                      className="p-1 px-2 border border-white/5 bg-white/[0.01] hover:bg-white/5 text-gray-400 hover:text-white rounded-lg text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-1 transition-all"
+                      className="p-2 px-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-1.5 transition-all shadow-sm hover:text-[#4f46e5]"
                     >
-                      <Edit className="w-3 h-3 text-gray-500" />
+                      <Edit className="w-3.5 h-3.5" />
                       <span>Edit</span>
                     </button>
                     
                     <button
                       onClick={() => handleDeleteProject(p)}
-                      className="p-1 px-2 border border-white/5 hover:border-red-500/20 hover:bg-red-500/10 text-gray-400 hover:text-red-400 rounded-lg text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-1 transition-all"
+                      className="p-2 border border-slate-200 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl transition-all shadow-sm"
+                      title="Delete"
                     >
-                      <Trash2 className="w-3 h-3 text-gray-500 hover:text-red-400" />
-                      <span>Delete</span>
+                      <Trash2 className="w-4 h-4" />
                     </button>
                   </div>
 
@@ -414,65 +397,63 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
         )}
       </div>
 
-      {/* Form Modal */}
       <AnimatePresence>
         {isFormOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-[#030712]/85 backdrop-blur-md" onClick={() => setIsFormOpen(false)} />
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsFormOpen(false)} />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg rounded-3xl border border-white/10 bg-[#080d1a] p-6 sm:p-8 shadow-2xl z-10 space-y-6 max-h-[90vh] overflow-y-auto"
+              className="relative w-full max-w-xl rounded-[32px] border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl z-10 space-y-6 max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-white/5">
-                <h3 className="text-sm font-bold uppercase tracking-wider font-mono text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-electric" />
+              <div className="flex items-center justify-between pb-5 border-b border-slate-100">
+                <h3 className="text-sm font-bold uppercase tracking-wider font-mono text-slate-800 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#4f46e5]" />
                   <span>{editingId ? 'Edit Project Config' : 'Publish New Project'}</span>
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="p-1 rounded-full border border-white/5 hover:border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-all"
+                  className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-700 transition-all shadow-sm"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-4 text-xs font-sans">
+              <form onSubmit={handleFormSubmit} className="space-y-5 text-sm font-sans">
                 
-                {/* Visual Cover field */}
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-gray-500 block">PROJECT COVER URL</label>
+                  <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">PROJECT COVER URL</label>
                   <input
                     type="text"
                     required
                     value={formImages}
                     onChange={(e) => setFormImages(e.target.value)}
                     placeholder="Unsplash, cloud storage or absolute photo links..."
-                    className="w-full bg-[#03060f] border border-white/5 rounded-lg px-2.5 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-5 text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">PROJECT NAME</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">PROJECT NAME</label>
                     <input
                       type="text"
                       required
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
                       placeholder="Enterprise Dashboard Portal"
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">CATEGORY TARGET</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">CATEGORY TARGET</label>
                     <select
                       value={formCategory}
                       onChange={(e) => setFormCategory(e.target.value)}
-                      className="w-full bg-navy border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     >
                       <option value="Web Application">Web Application</option>
                       <option value="Mobile App">Mobile App</option>
@@ -484,87 +465,87 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-gray-400 block">DESCRIPTION OVERVIEW</label>
+                  <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">DESCRIPTION OVERVIEW</label>
                   <textarea
                     rows={3}
                     required
                     value={formDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                     placeholder="Detailed structural documentation on what problems this project resolves, client feedback, and sprint architecture..."
-                    className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-electric resize-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm resize-none"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-5 text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">CLIENT SPONSOR</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">CLIENT SPONSOR</label>
                     <input
                       type="text"
                       value={formClient}
                       onChange={(e) => setFormClient(e.target.value)}
                       placeholder="e.g. Starwood Ltd, Google, Internal"
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">COMPLETION/DELIVERY DATE</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">DELIVERY DATE</label>
                     <input
                       type="date"
                       value={formDate}
                       onChange={(e) => setFormDate(e.target.value)}
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric font-monoColor"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm font-mono text-xs"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-gray-400 block">TECHNOLOGIES (COMMA SEPARATED)</label>
+                  <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">TECHNOLOGIES</label>
                   <input
                     type="text"
                     required
                     value={formTech}
                     onChange={(e) => setFormTech(e.target.value)}
-                    placeholder="React, Redux, PostgreSQL, GCP Cloud SQL"
-                    className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                    placeholder="React, Redux, PostgreSQL"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm font-mono"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-5 text-xs">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">LIVE ENVIRONMENT URL</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">LIVE URL</label>
                     <input
                       type="text"
                       value={formLiveUrl}
                       onChange={(e) => setFormLiveUrl(e.target.value)}
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric font-mono text-[11px]"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm font-mono text-[11px]"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">GITHUB SYSTEM REPO</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">GITHUB REPO</label>
                     <input
                       type="text"
                       value={formGithubUrl}
                       onChange={(e) => setFormGithubUrl(e.target.value)}
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric font-mono text-[11px]"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm font-mono text-[11px]"
                     />
                   </div>
                 </div>
 
-                <div className="flex gap-4 items-center p-3 rounded-xl border border-white/5 bg-white/[0.01]">
-                  <div className="flex-1 space-y-0.5">
-                    <span className="text-xs font-bold text-white">Status Allocation</span>
-                    <p className="text-[10px] text-gray-500">Target deployment stage status.</p>
+                <div className="flex gap-5 items-center p-4 rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
+                  <div className="flex-1 space-y-1">
+                    <span className="text-xs font-bold text-slate-800">Status Allocation</span>
+                    <p className="text-[10px] text-slate-500">Target deployment stage status.</p>
                   </div>
-                  <div className="flex gap-1 font-mono text-[9px] font-bold">
+                  <div className="flex gap-2 font-mono text-[9px] font-bold">
                     {(['pending', 'in_progress', 'completed'] as const).map(st => (
                       <button
                         key={st}
                         type="button"
                         onClick={() => setFormStatus(st)}
-                        className={`px-3 py-1.5 rounded-lg border uppercase ${
+                        className={`px-4 py-2 rounded-xl border uppercase shadow-sm ${
                           formStatus === st
-                            ? 'bg-electric/10 border-electric text-electric'
-                            : 'bg-white/[0.01] border-white/5 text-gray-400'
+                            ? 'bg-[#4f46e5] border-[#4f46e5] text-white'
+                            : 'bg-white border-slate-200 text-slate-500 hover:text-slate-800'
                         }`}
                       >
                         {st}
@@ -573,59 +554,56 @@ export default function ProjectManagement({ onLogActivity }: ProjectManagementPr
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  
-                  {/* Published Toggle */}
-                  <div className="flex items-center justify-between p-3.5 rounded-xl border border-white/5 bg-white/[0.01]">
+                <div className="grid grid-cols-2 gap-5">
+                  <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
                     <div>
-                      <span className="font-bold text-xs text-white block">Published</span>
-                      <p className="text-[9px] text-gray-500">Public visibility.</p>
+                      <span className="font-bold text-xs text-slate-800 block">Published</span>
+                      <p className="text-[9px] text-slate-500">Public visibility.</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setFormPublished(!formPublished)}
-                      className="text-gray-400 hover:text-white"
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       {formPublished ? (
-                        <ToggleRight className="w-8 h-8 text-emerald-400" />
+                        <ToggleRight className="w-8 h-8 text-emerald-500" />
                       ) : (
-                        <ToggleLeft className="w-8 h-8 text-gray-600" />
+                        <ToggleLeft className="w-8 h-8 text-slate-400" />
                       )}
                     </button>
                   </div>
 
-                  {/* Featured Toggle */}
-                  <div className="flex items-center justify-between p-3.5 rounded-xl border border-white/5 bg-white/[0.01]">
+                  <div className="flex items-center justify-between p-4 rounded-2xl border border-slate-200 bg-slate-50 shadow-sm">
                     <div>
-                      <span className="font-bold text-xs text-white block">Featured Badge</span>
-                      <p className="text-[9px] text-gray-500">Prioritize top row.</p>
+                      <span className="font-bold text-xs text-slate-800 block">Featured Badge</span>
+                      <p className="text-[9px] text-slate-500">Prioritize top row.</p>
                     </div>
                     <button
                       type="button"
                       onClick={() => setFormFeatured(!formFeatured)}
-                      className="text-gray-400 hover:text-white"
+                      className="text-slate-400 hover:text-slate-600 transition-colors"
                     >
                       {formFeatured ? (
                         <ToggleRight className="w-8 h-8 text-amber-500" />
                       ) : (
-                        <ToggleLeft className="w-8 h-8 text-gray-600" />
+                        <ToggleLeft className="w-8 h-8 text-slate-400" />
                       )}
                     </button>
                   </div>
 
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 border-t border-white/5">
+                <div className="flex gap-3 justify-end pt-5 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setIsFormOpen(false)}
-                    className="px-4 py-2 border border-white/5 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
+                    className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 bg-white rounded-xl text-slate-600 transition-all shadow-sm text-xs font-bold uppercase tracking-wider"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-white hover:bg-electric text-navy font-bold rounded-xl text-xs uppercase tracking-widest transition-all shadow-[0_4px_15px_rgba(255,255,255,0.1)] active:scale-95"
+                    className="px-6 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest transition-all shadow-md active:scale-95"
                   >
                     Publish Project
                   </button>

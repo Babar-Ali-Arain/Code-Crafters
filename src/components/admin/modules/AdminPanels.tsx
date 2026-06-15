@@ -22,7 +22,7 @@ interface AdminPanelsProps {
 
 export default function AdminPanels({ activePanel, logs, onLogActivity }: AdminPanelsProps) {
   return (
-    <div className="space-y-6 text-white font-sans">
+    <div className="space-y-6 text-slate-800 font-sans pb-10">
       {activePanel === 'clients' && <ClientManager onLogActivity={onLogActivity} />}
       {activePanel === 'blogs' && <BlogManager onLogActivity={onLogActivity} />}
       {activePanel === 'media' && <MediaLibrary onLogActivity={onLogActivity} />}
@@ -133,74 +133,78 @@ function ClientManager({ onLogActivity }: { onLogActivity: any }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-display font-semibold">Client Relations Database</h2>
-          <p className="text-gray-400 text-xs">Track enterprise corporate clients, communication logs, and associated project lists.</p>
+          <h2 className="text-2xl font-display font-semibold text-slate-800">Client Relations Database</h2>
+          <p className="text-slate-500 text-xs mt-1">Track enterprise corporate clients, communication logs, and associated project lists.</p>
         </div>
-        <button onClick={openAdd} className="px-4 py-2 bg-electric hover:bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95">
+        <button onClick={openAdd} className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95">
           <Plus className="w-4 h-4" />
           <span>Add Client Record</span>
         </button>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+      <div className="flex justify-between items-center bg-white p-5 rounded-[24px] border border-slate-100/60 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
+        <div className="relative w-full md:w-80">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             placeholder="Search accounts, companies..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#050b14]/55 border border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 font-sans transition-colors"
           />
         </div>
-        <span className="text-xs text-gray-500 font-mono">ACTIVE CLIENTS: {filtered.length}</span>
+        <span className="text-xs text-slate-400 font-mono font-bold tracking-wider hidden sm:block">ACTIVE CLIENTS: <span className="text-slate-800">{filtered.length}</span></span>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#050b14]/40 backdrop-blur-md">
+      <div className="overflow-x-auto rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
         <table className="w-full text-left border-collapse font-sans text-xs">
           <thead>
-            <tr className="border-b border-white/5 bg-white/[0.01] text-gray-400 uppercase tracking-wider text-[10px] font-mono">
-              <th className="p-4 font-normal">Client details</th>
-              <th className="p-4 font-normal">Contact info</th>
-              <th className="p-4 font-normal">Status</th>
-              <th className="p-4 font-normal">Company Notes</th>
-              <th className="p-4 font-normal text-right">Actions</th>
+            <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-400 uppercase tracking-wider text-[10px] font-mono">
+              <th className="p-5 font-bold">Client details</th>
+              <th className="p-5 font-bold">Contact info</th>
+              <th className="p-5 font-bold">Status</th>
+              <th className="p-5 font-bold">Company Notes</th>
+              <th className="p-5 font-bold text-right">Actions</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={5} className="p-8 text-center text-gray-500">Retrieving operational channels...</td></tr>
+              <tr><td colSpan={5} className="p-8 text-center text-slate-400">Retrieving operational channels...</td></tr>
             ) : filtered.length === 0 ? (
-              <tr><td colSpan={5} className="p-8 text-center text-gray-500">No active clients registered.</td></tr>
+              <tr><td colSpan={5} className="p-8 text-center text-slate-400 bg-slate-50 border-t border-slate-100 border-dashed">No active clients registered.</td></tr>
             ) : (
               filtered.map(c => (
-                <tr key={c.id} className="border-b border-white/5 hover:bg-white/[0.01]">
-                  <td className="p-4">
-                    <div className="font-bold text-white text-sm">{c.clientName}</div>
-                    <div className="text-[10px] text-gray-500 font-mono mt-0.5">{c.company}</div>
+                <tr key={c.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                  <td className="p-5">
+                    <div className="font-bold text-slate-800 text-sm font-display">{c.clientName}</div>
+                    <div className="text-[10px] text-slate-500 font-mono mt-1 uppercase tracking-wider">{c.company}</div>
                   </td>
-                  <td className="p-4 space-y-0.5 font-mono text-[11px]">
-                    <div className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5 text-gray-600" /><span>{c.email}</span></div>
-                    {c.phone && <div className="flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-gray-600" /><span>{c.phone}</span></div>}
+                  <td className="p-5 space-y-1.5 font-mono text-[11px] text-slate-600 font-medium">
+                    <div className="flex items-center gap-2"><Mail className="w-3.5 h-3.5 text-slate-400" /><span>{c.email}</span></div>
+                    {c.phone && <div className="flex items-center gap-2"><Phone className="w-3.5 h-3.5 text-slate-400" /><span>{c.phone}</span></div>}
                   </td>
-                  <td className="p-4">
-                    <span className={`px-2 py-0.5 rounded-full text-[9px] font-mono uppercase font-bold border ${
+                  <td className="p-5">
+                    <span className={`px-3 py-1 rounded-full text-[9px] font-mono uppercase font-bold border shadow-sm ${
                       c.status === 'active' 
-                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
+                        ? 'bg-emerald-50 border-emerald-200 text-emerald-600' 
                         : c.status === 'inactive' 
-                        ? 'bg-gray-500/10 border-gray-500/20 text-gray-400' 
-                        : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                        ? 'bg-slate-100 border-slate-200 text-slate-500' 
+                        : 'bg-amber-50 border-amber-200 text-amber-600'
                     }`}>
                       {c.status}
                     </span>
                   </td>
-                  <td className="p-4 text-gray-400 max-w-xs truncate">{c.notes || 'No historical client logs recorded.'}</td>
-                  <td className="p-4 text-right">
-                    <div className="flex justify-end gap-1.5">
-                      <button onClick={() => openEdit(c)} className="p-1.5 rounded-lg border border-white/5 bg-white/[0.01] hover:bg-white/5 text-gray-400 hover:text-white" title="Edit"><Edit className="w-3.5 h-3.5" /></button>
-                      <button onClick={() => onDelete(c)} className="p-1.5 rounded-lg border border-white/5 hover:border-red-500/20 hover:bg-red-500/10 text-gray-550 hover:text-red-400" title="Delete"><Trash className="w-3.5 h-3.5" /></button>
+                  <td className="p-5 text-slate-500 max-w-xs truncate font-medium">{c.notes || 'No historical client logs recorded.'}</td>
+                  <td className="p-5 text-right">
+                    <div className="flex justify-end gap-2">
+                       <button onClick={() => openEdit(c)} className="p-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl transition-all shadow-sm hover:text-[#4f46e5]" title="Edit">
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button onClick={() => onDelete(c)} className="p-2 border border-slate-200 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl transition-all shadow-sm" title="Delete">
+                        <Trash className="w-3.5 h-3.5" />
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -213,30 +217,30 @@ function ClientManager({ onLogActivity }: { onLogActivity: any }) {
       <AnimatePresence>
         {isFormOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsFormOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="relative bg-[#080d1a] border border-white/10 rounded-2xl p-6 w-full max-w-md z-12 space-y-4">
-              <h3 className="text-sm font-bold font-mono text-white flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-electric" /><span>{editingId ? 'EDIT CLIENT DETAILS' : 'ADD NEW CLIENT'}</span></h3>
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsFormOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="relative bg-white border border-slate-200 rounded-[32px] p-6 sm:p-8 w-full max-w-md z-12 space-y-6 shadow-2xl">
+              <h3 className="text-sm font-bold font-mono text-slate-800 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[#4f46e5]" /><span>{editingId ? 'EDIT CLIENT DETAILS' : 'ADD NEW CLIENT'}</span></h3>
               <form onSubmit={onSubmit} className="space-y-4 text-xs font-sans">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">CLIENT NAME</label><input type="text" required value={formName} onChange={e => setFormName(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">COMPANY NAME</label><input type="text" value={formCompany} onChange={e => setFormCompany(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">CLIENT NAME</label><input type="text" required value={formName} onChange={e => setFormName(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">COMPANY NAME</label><input type="text" value={formCompany} onChange={e => setFormCompany(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">EMAIL ADDRESS</label><input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">PHONE NUMBER</label><input type="text" value={formPhone} onChange={e => setFormPhone(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">EMAIL ADDRESS</label><input type="email" required value={formEmail} onChange={e => setFormEmail(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">PHONE NUMBER</label><input type="text" value={formPhone} onChange={e => setFormPhone(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-gray-400 block font-mono">ACCOUNT STATUS</label>
-                  <select value={formStatus} onChange={e => setFormStatus(e.target.value as any)} className="w-full bg-navy border border-white/5 rounded-lg p-2.5 text-white">
+                <div className="space-y-1.5">
+                  <label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">ACCOUNT STATUS</label>
+                  <select value={formStatus} onChange={e => setFormStatus(e.target.value as any)} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm">
                     <option value="lead">Lead / Proposal</option>
                     <option value="active">Active Relationship</option>
                     <option value="inactive">Inactive / Archive</option>
                   </select>
                 </div>
-                <div className="space-y-1"><label className="text-gray-400 block font-mono">ACCOUNT LOG NOTES</label><textarea value={formNotes} onChange={e => setFormNotes(e.target.value)} rows={3} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white resize-none" /></div>
-                <div className="flex gap-2 justify-end pt-4 border-t border-white/5">
-                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-3.5 py-2 border border-white/5 rounded-lg text-gray-400">Cancel</button>
-                  <button type="submit" className="px-4 py-2 bg-white text-navy font-bold rounded-lg uppercase tracking-wider">Save Account</button>
+                <div className="space-y-1.5"><label className="text-[10px] text-slate-500 block font-mono font-bold uppercase">ACCOUNT LOG NOTES</label><textarea value={formNotes} onChange={e => setFormNotes(e.target.value)} rows={3} className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:border-[#4f46e5] focus:outline-none resize-none shadow-sm focus:ring-2 focus:ring-[#4f46e5]/20" /></div>
+                <div className="flex gap-3 justify-end pt-5 border-t border-slate-100">
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 bg-white rounded-xl text-slate-600 transition-all font-bold uppercase text-[10px] tracking-wider shadow-sm">Cancel</button>
+                  <button type="submit" className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-[10px] uppercase tracking-widest shadow-md">Save Account</button>
                 </div>
               </form>
             </motion.div>
@@ -265,7 +269,7 @@ function BlogManager({ onLogActivity }: { onLogActivity: any }) {
   const [formTags, setFormTags] = useState('');
   const [formPublished, setFormPublished] = useState(true);
   
-  // SEO Meta fields (Pillar details!)
+  // SEO Meta fields
   const [formSeoTitle, setFormSeoTitle] = useState('');
   const [formSeoDesc, setFormSeoDesc] = useState('');
   const [formSeoKeywords, setFormSeoKeywords] = useState('');
@@ -309,7 +313,6 @@ function BlogManager({ onLogActivity }: { onLogActivity: any }) {
     setIsFormOpen(true);
   };
 
-  // Helper autocomplete slug
   const handleTitleChange = (val: string) => {
     setFormTitle(val);
     if (!editingId) {
@@ -361,63 +364,62 @@ function BlogManager({ onLogActivity }: { onLogActivity: any }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-xl font-display font-semibold">Technical Press & CMS Logs</h2>
-          <p className="text-gray-400 text-xs text-sans font-normal">Draft editorial documentation, engineering case studies, or search engine structured cards (SEO).</p>
+          <h2 className="text-2xl font-display font-semibold text-slate-800">Technical Press & CMS Logs</h2>
+          <p className="text-slate-500 text-xs mt-1">Draft editorial documentation, engineering case studies, or search engine structured cards (SEO).</p>
         </div>
-        <button onClick={openAdd} className="px-4 py-2 bg-electric hover:bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-wider flex items-center gap-1.5 transition-all active:scale-95">
+        <button onClick={openAdd} className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95">
           <Plus className="w-4 h-4" />
           <span>Write Article</span>
         </button>
       </div>
 
-      <div className="flex justify-between items-center">
-        <div className="relative w-72">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+      <div className="flex justify-between items-center bg-white p-5 rounded-[24px] border border-slate-100/60 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
+        <div className="relative w-full md:w-80">
+          <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
             placeholder="Search articles by title, content..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#050b14]/55 border border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs text-slate-700 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 font-sans transition-colors"
           />
         </div>
-        <span className="text-xs text-gray-500 font-mono">COMPLIED BLOGS: {blogs.length}</span>
+        <span className="text-xs text-slate-400 font-mono font-bold tracking-wider hidden sm:block">COMPILED BLOGS: <span className="text-slate-800">{blogs.length}</span></span>
       </div>
 
-      {/* Grid of articles */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full text-center py-12 text-gray-500">Querying technical literature...</div>
+          <div className="col-span-full text-center py-12 text-slate-400">Querying technical literature...</div>
         ) : blogs.length === 0 ? (
-          <div className="col-span-full text-center py-24 border border-dashed border-white/5 rounded-2xl text-gray-500">No blog articles recorded. Start documenting your sprints!</div>
+          <div className="col-span-full text-center py-24 border border-dashed border-slate-200 bg-slate-50 rounded-[32px] text-slate-500 shadow-sm">No blog articles recorded. Start documenting your sprints!</div>
         ) : (
           blogs.filter(b => b.title.toLowerCase().includes(search.toLowerCase())).map(b => (
-            <div key={b.id} className="rounded-2xl border border-white/5 bg-[#050b14]/40 overflow-hidden flex flex-col justify-between hover:border-white/10 transition-colors">
-              <div className="h-40 relative">
-                <img src={b.featuredImage} alt={b.title} className="w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#050b14] to-transparent" />
-                <span className={`absolute bottom-3 right-3 text-[8px] font-mono font-bold uppercase px-2 py-0.5 rounded ${
+            <div key={b.id} className="rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-[#4f46e5]/20 overflow-hidden flex flex-col justify-between transition-all group">
+              <div className="h-48 relative bg-slate-100 border-b border-slate-100/60 overflow-hidden">
+                <img src={b.featuredImage} alt={b.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+                <span className={`absolute bottom-4 right-4 text-[9px] font-mono font-bold uppercase px-3 py-1.5 rounded-full shadow-sm backdrop-blur-md ${
                   b.published 
-                    ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' 
-                    : 'bg-rose-500/15 border border-rose-500/25 text-rose-450'
+                    ? 'bg-white/95 border border-slate-200 text-emerald-600' 
+                    : 'bg-white/95 border border-slate-200 text-rose-500'
                 }`}>
                   {b.published ? 'Live Publication' : 'Draft Copy'}
                 </span>
               </div>
-              <div className="p-4 space-y-3">
-                <h4 className="font-bold text-white font-display text-sm line-clamp-2 leading-tight">{b.title}</h4>
-                <p className="text-gray-400 text-xs line-clamp-2">{b.content}</p>
-                <div className="flex flex-wrap gap-1 font-mono text-[9px] text-[#00E5FF]">
-                  {b.tags.slice(0,3).map((tg, i) => <span key={i}>#{tg}</span>)}
+              <div className="p-6 space-y-4">
+                <h4 className="font-bold text-slate-800 font-display text-lg line-clamp-2 leading-tight">{b.title}</h4>
+                <p className="text-slate-500 text-xs line-clamp-2 font-medium">{b.content}</p>
+                <div className="flex flex-wrap gap-1.5 font-mono text-[10px] font-bold">
+                  {b.tags.slice(0,3).map((tg, i) => <span key={i} className="text-[#4f46e5] bg-[#4f46e5]/10 px-2.5 py-1 rounded-lg">#{tg}</span>)}
                 </div>
               </div>
-              <div className="p-4 border-t border-white/5 flex justify-between items-center text-right bg-white/[0.01]">
-                <span className="text-[9px] font-mono text-gray-500 truncate max-w-[120px]">{b.slug}</span>
-                <div className="flex gap-1">
-                  <button onClick={() => openEdit(b)} className="p-1 px-2 border border-white/5 bg-white/[0.01] hover:bg-white/5 text-gray-400 hover:text-white rounded-lg text-[9px] uppercase font-bold font-mono">Configure</button>
-                  <button onClick={() => onDelete(b)} className="p-1 px-2 border border-white/5 hover:border-red-500/15 text-gray-500 hover:text-red-400 rounded-lg text-[9px] uppercase font-bold font-mono">Delete</button>
+              <div className="p-5 border-t border-slate-100 flex justify-between items-center text-right bg-slate-50/50 rounded-b-[32px]">
+                <span className="text-[10px] font-mono font-bold text-slate-400 truncate max-w-[120px] bg-white border border-slate-200 px-3 py-1.5 rounded-xl shadow-sm">{b.slug}</span>
+                <div className="flex gap-2">
+                  <button onClick={() => openEdit(b)} className="p-2 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl transition-all shadow-sm hover:text-[#4f46e5]" title="Configure"><Edit className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => onDelete(b)} className="p-2 border border-slate-200 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl transition-all shadow-sm"><Trash className="w-3.5 h-3.5"/></button>
                 </div>
               </div>
             </div>
@@ -428,45 +430,44 @@ function BlogManager({ onLogActivity }: { onLogActivity: any }) {
       <AnimatePresence>
         {isFormOpen && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-md" onClick={() => setIsFormOpen(false)} />
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="relative bg-[#080d1a] border border-[#ffffff15] rounded-3xl p-6 sm:p-8 w-full max-w-2xl z-12 space-y-4 max-h-[90vh] overflow-y-auto">
-              <h3 className="text-sm font-bold font-mono text-white flex items-center gap-1.5"><Sparkles className="w-4 h-4 text-electric" /><span>{editingId ? 'EDIT EDITORIAL BLUEPRINT' : 'WRITE FRESH LITERATURE'}</span></h3>
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsFormOpen(false)} />
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} className="relative bg-white border border-slate-200 shadow-2xl rounded-[32px] p-6 sm:p-8 w-full max-w-2xl z-12 space-y-6 max-h-[90vh] overflow-y-auto">
+              <h3 className="text-sm font-bold font-mono text-slate-800 flex items-center gap-2"><Sparkles className="w-4 h-4 text-[#4f46e5]" /><span>{editingId ? 'EDIT EDITORIAL BLUEPRINT' : 'WRITE FRESH LITERATURE'}</span></h3>
               <form onSubmit={onSubmit} className="space-y-4 text-xs font-sans">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">ARTICLE TITLE</label><input type="text" required value={formTitle} onChange={e => handleTitleChange(e.target.value)} placeholder="Transforming Sprints" className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">ARTICLE SLUG URL</label><input type="text" required value={formSlug} onChange={e => setFormSlug(e.target.value)} placeholder="transforming-sprints" className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] font-mono font-bold uppercase text-slate-500 block">ARTICLE TITLE</label><input type="text" required value={formTitle} onChange={e => handleTitleChange(e.target.value)} placeholder="Transforming Sprints" className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] font-mono font-bold uppercase text-slate-500 block">ARTICLE SLUG URL</label><input type="text" required value={formSlug} onChange={e => setFormSlug(e.target.value)} placeholder="transforming-sprints" className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">FEATURED BANNER IMAGE URL</label><input type="text" value={formImage} onChange={e => setFormImage(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
-                  <div className="space-y-1"><label className="text-gray-400 block font-mono">TAGS (COMMA SEPARATED)</label><input type="text" value={formTags} onChange={e => setFormTags(e.target.value)} placeholder="SaaS, UX Design" className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] font-mono font-bold uppercase text-slate-500 block">FEATURED BANNER IMAGE URL</label><input type="text" value={formImage} onChange={e => setFormImage(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] font-mono font-bold uppercase text-slate-500 block">TAGS (COMMA SEPARATED)</label><input type="text" value={formTags} onChange={e => setFormTags(e.target.value)} placeholder="SaaS, UX Design" className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm" /></div>
                 </div>
 
-                <div className="space-y-1"><label className="text-gray-400 block font-mono">EDITORIAL ARTICLE CONTENT</label><textarea required value={formContent} onChange={e => setFormContent(e.target.value)} rows={5} placeholder="Draft the content using styled typography layout specs..." className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-white resize-none" /></div>
+                <div className="space-y-1.5"><label className="text-[10px] font-mono font-bold uppercase text-slate-500 block">EDITORIAL ARTICLE CONTENT</label><textarea required value={formContent} onChange={e => setFormContent(e.target.value)} rows={5} placeholder="Draft the content using styled typography layout specs..." className="w-full bg-white border border-slate-200 rounded-xl p-3 text-slate-800 focus:border-[#4f46e5] focus:outline-none focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm resize-none" /></div>
 
-                {/* SEO Configurations Expansion Panels */}
-                <div className="p-4 border border-white/5 bg-white/[0.01] rounded-2xl space-y-3">
-                  <span className="text-[9px] font-bold font-mono uppercase text-gray-500 tracking-wider block">SEARCH ENGINE OPTIMIZATION (SEO) PARAMETERS</span>
+                <div className="p-5 border border-slate-200 bg-slate-50 rounded-2xl space-y-4 shadow-sm">
+                  <span className="text-[10px] font-bold font-mono uppercase text-slate-400 tracking-wider block">SEARCH ENGINE OPTIMIZATION (SEO) PARAMETERS</span>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1"><label className="text-gray-500 block font-mono">METADATA TITLE</label><input type="text" value={formSeoTitle} onChange={e => setFormSeoTitle(e.target.value)} className="w-full bg-[#03060f]/60 border border-white/5 rounded-lg p-2 text-white" /></div>
-                    <div className="space-y-1"><label className="text-gray-500 block font-mono">KEYWORD KEYPHRASES</label><input type="text" value={formSeoKeywords} onChange={e => setFormSeoKeywords(e.target.value)} placeholder="crafting, developer" className="w-full bg-[#03060f]/60 border border-white/5 rounded-lg p-2 text-white" /></div>
+                    <div className="space-y-1.5"><label className="text-[10px] font-bold uppercase text-slate-500 block font-mono">METADATA TITLE</label><input type="text" value={formSeoTitle} onChange={e => setFormSeoTitle(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none shadow-sm" /></div>
+                    <div className="space-y-1.5"><label className="text-[10px] font-bold uppercase text-slate-500 block font-mono">KEYWORD KEYPHRASES</label><input type="text" value={formSeoKeywords} onChange={e => setFormSeoKeywords(e.target.value)} placeholder="crafting, developer" className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none shadow-sm" /></div>
                   </div>
-                  <div className="space-y-1"><label className="text-gray-500 block font-mono">METADATA DESCRIPTION EXCERPT</label><input type="text" value={formSeoDesc} onChange={e => setFormSeoDesc(e.target.value)} className="w-full bg-[#03060f]/60 border border-white/5 rounded-lg p-2 text-white" /></div>
+                  <div className="space-y-1.5"><label className="text-[10px] font-bold uppercase text-slate-500 block font-mono">METADATA DESCRIPTION EXCERPT</label><input type="text" value={formSeoDesc} onChange={e => setFormSeoDesc(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-2.5 text-slate-800 focus:border-[#4f46e5] focus:outline-none shadow-sm" /></div>
                 </div>
 
-                <div className="flex items-center justify-between p-3 border border-white/5 bg-white/[0.01] rounded-xl">
+                <div className="flex items-center justify-between p-4 border border-slate-200 bg-slate-50 rounded-2xl shadow-sm">
                   <div>
-                    <span className="font-bold text-xs text-white">Live Publication Toggle</span>
-                    <p className="text-[10px] text-gray-500">Determine if visible to indexing bots and readers.</p>
+                    <span className="font-bold text-xs text-slate-800">Live Publication Toggle</span>
+                    <p className="text-[10px] text-slate-500 font-medium">Determine if visible to indexing bots and readers.</p>
                   </div>
-                  <button type="button" onClick={() => setFormPublished(!formPublished)} className={`px-4 py-1.5 rounded-lg border font-mono text-[9px] uppercase font-bold ${
-                    formPublished ? 'bg-emerald-500/10 border-emerald-500/25 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-450'
+                  <button type="button" onClick={() => setFormPublished(!formPublished)} className={`px-5 py-2.5 rounded-xl border font-mono text-[9px] uppercase font-bold shadow-sm transition-colors ${
+                    formPublished ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-rose-50 border-rose-200 text-rose-500'
                   }`}>{formPublished ? 'Live Publication' : 'Draft Stage'}</button>
                 </div>
 
-                <div className="flex gap-2 justify-end pt-4 border-t border-white/5 animate-pulse">
-                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-3.5 py-2 border border-white/5 rounded-lg text-gray-400">Cancel</button>
-                  <button type="submit" className="px-5 py-2 bg-white text-navy font-bold rounded-lg uppercase tracking-wider">Commit Publication</button>
+                <div className="flex gap-3 justify-end pt-5 border-t border-slate-100">
+                  <button type="button" onClick={() => setIsFormOpen(false)} className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 bg-white rounded-xl text-slate-600 transition-all font-bold uppercase tracking-wider text-[10px] shadow-sm">Cancel</button>
+                  <button type="submit" className="px-6 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-[10px] uppercase tracking-widest shadow-md transition-all active:scale-95">Commit Publication</button>
                 </div>
               </form>
             </motion.div>
@@ -516,47 +517,47 @@ function MediaLibrary({ onLogActivity }: { onLogActivity: any }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Media Library CDN</h2>
-        <p className="text-gray-400 text-xs">Upload system banners, client templates, and general PDFs. Dynamic drag-and-drop synchronized.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Media Library CDN</h2>
+        <p className="text-slate-500 text-xs mt-1">Upload system banners, client templates, and general PDFs. Dynamic drag-and-drop synchronized.</p>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-[#050b14]/40 p-6 rounded-2xl border border-white/5">
-        <div className="flex items-center gap-1.5"><ImageIcon className="w-5 h-5 text-electric" /><span className="text-xs font-mono font-bold">DRAG AND DROP ENGINES ACTIVE</span></div>
+      <div className="flex flex-col sm:flex-row gap-4 justify-between items-center bg-white p-6 rounded-[24px] border border-slate-100 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
+        <div className="flex items-center gap-2"><ImageIcon className="w-6 h-6 text-[#4f46e5]" /><span className="text-xs font-mono font-bold text-slate-800">DRAG AND DROP ENGINES ACTIVE</span></div>
         <input type="file" id="media-upload" className="hidden" onChange={handleFileUpload} />
-        <label htmlFor="media-upload" className="px-4 py-2 bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer hover:bg-electric hover:shadow-[0_0_15px_rgba(0,240,255,0.4)] transition-all">Upload File Resource</label>
+        <label htmlFor="media-upload" className="px-6 py-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-800 font-bold rounded-xl text-[10px] uppercase tracking-wider cursor-pointer shadow-sm transition-all text-center">Upload File Resource</label>
       </div>
 
-      <div className="relative w-72">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+      <div className="relative w-80">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input
           type="text"
           placeholder="Filter documents..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full bg-[#050b14]/55 border border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none"
+          className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 shadow-sm"
         />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
         {filtered.map(media => (
-          <div key={media.id} className="p-4 rounded-xl border border-white/5 bg-[#050b14]/25 hover:border-[#ffffff15] transition-all relative group flex flex-col justify-between h-44">
+          <div key={media.id} className="p-4 rounded-[24px] border border-slate-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-[#4f46e5]/20 transition-all relative group flex flex-col justify-between h-48">
             
-            <div className="h-24 bg-white/[0.01] rounded-lg border border-white/5 flex items-center justify-center overflow-hidden relative">
+            <div className="h-28 bg-slate-50 rounded-[16px] border border-slate-100 flex items-center justify-center overflow-hidden relative">
               {media.type === 'image' ? (
-                <img src={media.url} alt="asset" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                <img src={media.url} alt="asset" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               ) : media.type === 'data' ? (
-                <FileSpreadsheet className="w-10 h-10 text-emerald-400" />
+                <FileSpreadsheet className="w-10 h-10 text-emerald-500" />
               ) : (
-                <FileText className="w-10 h-10 text-blue-400" />
+                <FileText className="w-10 h-10 text-blue-500" />
               )}
             </div>
 
-            <div className="pt-2 text-center">
-              <h5 className="text-[11px] font-mono font-bold text-white truncate">{media.name}</h5>
-              <span className="text-[9px] font-mono text-gray-500">{media.size}</span>
+            <div className="pt-3 text-center">
+              <h5 className="text-[11px] font-mono font-bold text-slate-800 truncate px-1">{media.name}</h5>
+              <span className="text-[9px] font-mono font-bold text-slate-400 mt-0.5 block">{media.size}</span>
             </div>
 
-            <button onClick={() => handleRemove(media.id, media.name)} className="absolute top-2 right-2 p-1 bg-black/60 hover:bg-red-500/20 text-gray-400 hover:text-red-400 border border-white/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+            <button onClick={() => handleRemove(media.id, media.name)} className="absolute top-2 right-2 p-1.5 bg-white/90 backdrop-blur-sm hover:bg-red-50 hover:border-red-200 text-slate-400 hover:text-red-500 border border-slate-200 rounded-full opacity-0 group-hover:opacity-100 transition-all shadow-sm">
               <Trash className="w-3.5 h-3.5" />
             </button>
           </div>
@@ -606,43 +607,43 @@ function TestimonialManager({ onLogActivity }: { onLogActivity: any }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Testimonial Reviews Validation</h2>
-        <p className="text-gray-400 text-xs text-sans">Audit and approve testimonials submitted by client accounts before public display rendering.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Testimonial Reviews Validation</h2>
+        <p className="text-slate-500 text-xs text-sans mt-1">Audit and approve testimonials submitted by client accounts before public display rendering.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {loading ? (
-          <div className="col-span-full text-center py-6 text-gray-500">Querying accolades...</div>
+          <div className="col-span-full text-center py-6 text-slate-400">Querying accolades...</div>
         ) : reviews.length === 0 ? (
-          <div className="col-span-full text-center py-12 border border-dashed border-white/5 rounded-2xl text-gray-500">No testimonials submitted yet.</div>
+          <div className="col-span-full text-center py-24 bg-slate-50 border border-dashed border-slate-200 rounded-[32px] text-slate-500 shadow-sm font-medium">No testimonials submitted yet.</div>
         ) : (
           reviews.map(rev => (
-            <div key={rev.id} className="p-5 rounded-2xl border border-white/5 bg-[#050b14]/40 flex flex-col justify-between gap-4">
-              <div className="space-y-2">
-                <div className="flex gap-1">
+            <div key={rev.id} className="p-6 rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] flex flex-col justify-between gap-5 transition-all hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)] hover:border-[#4f46e5]/20">
+              <div className="space-y-3">
+                <div className="flex gap-1.5">
                   {Array.from({ length: rev.rating || 5 }).map((_, i) => (
-                    <Star key={i} className="w-3.5 h-3.5 fill-amber-300 text-amber-300" />
+                    <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
                   ))}
                 </div>
-                <p className="text-gray-300 text-xs italic leading-relaxed">"{rev.review}"</p>
+                <p className="text-slate-600 text-sm italic leading-relaxed font-medium">"{rev.review}"</p>
               </div>
 
-              <div className="flex justify-between items-center pt-3 border-t border-white/5 text-xs text-mono bg-white/[0.01] p-3 rounded-xl">
-                <div className="flex items-center gap-2">
-                  <img src={rev.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(rev.clientName)}`} alt={rev.clientName} className="w-8 h-8 rounded-full" />
+              <div className="flex justify-between items-center pt-4 border-t border-slate-100 text-xs text-mono bg-slate-50/50 p-4 rounded-[20px] shadow-sm">
+                <div className="flex items-center gap-3">
+                  <img src={rev.profileImage || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(rev.clientName)}`} alt={rev.clientName} className="w-10 h-10 rounded-full border border-slate-200 bg-white" />
                   <div>
-                    <h5 className="font-bold text-white leading-none">{rev.clientName}</h5>
-                    <span className="text-[9px] text-gray-500 tracking-wider block mt-0.5">{rev.position} @ {rev.company}</span>
+                    <h5 className="font-bold text-slate-800 leading-none">{rev.clientName}</h5>
+                    <span className="text-[10px] font-bold text-slate-500 tracking-wider block mt-1">{rev.position} @ {rev.company}</span>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <button onClick={() => handleApprove(rev.id!, rev.clientName, rev.approved)} className={`px-2.5 py-1 rounded text-[9px] font-bold uppercase transition-all border ${
+                  <button onClick={() => handleApprove(rev.id!, rev.clientName, rev.approved)} className={`px-3 py-1.5 rounded-lg text-[9px] font-bold uppercase transition-all border shadow-sm ${
                     rev.approved 
-                      ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' 
-                      : 'bg-amber-500/10 border-amber-500/20 text-amber-400'
+                      ? 'bg-emerald-50 border-emerald-200 text-emerald-600 hover:bg-emerald-100' 
+                      : 'bg-amber-50 border-amber-200 text-amber-600 hover:bg-amber-100'
                   }`}>{rev.approved ? 'Approved' : 'Pending'}</button>
-                  <button onClick={() => handleRemove(rev.id!, rev.clientName)} className="p-1 rounded bg-white/5 hover:bg-red-500/10 text-gray-400 hover:text-red-400"><Trash className="w-3.5 h-3.5" /></button>
+                  <button onClick={() => handleRemove(rev.id!, rev.clientName)} className="p-1.5 rounded-lg border border-slate-200 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 shadow-sm transition-all"><Trash className="w-3.5 h-3.5" /></button>
                 </div>
               </div>
             </div>
@@ -684,49 +685,49 @@ function AppointmentSystem({ onLogActivity }: { onLogActivity: any }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Consultation Scheduling & Calendar</h2>
-        <p className="text-gray-400 text-xs text-sans">Review inbound software consultations requested from prospective client accounts.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Consultation Scheduling & Calendar</h2>
+        <p className="text-slate-500 text-xs text-sans mt-1">Review inbound software consultations requested from prospective client accounts.</p>
       </div>
 
-      <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#050b14]/40">
+      <div className="overflow-x-auto rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
         <table className="w-full text-left border-collapse text-xs">
           <thead>
-            <tr className="border-b border-white/5 bg-white/[0.01] text-gray-500 text-[10px] uppercase font-mono">
-              <th className="p-4 font-normal">Sponsor details</th>
-              <th className="p-4 font-normal">Topic agenda</th>
-              <th className="p-4 font-normal">Scheduled slot</th>
-              <th className="p-4 font-normal">System Action</th>
+            <tr className="border-b border-slate-100 bg-slate-50/50 text-slate-400 text-[10px] uppercase font-mono font-bold tracking-wider">
+              <th className="p-5">Sponsor details</th>
+              <th className="p-5">Topic agenda</th>
+              <th className="p-5">Scheduled slot</th>
+              <th className="p-5">System Action</th>
             </tr>
           </thead>
           <tbody>
             {loading ? (
-              <tr><td colSpan={4} className="p-8 text-center text-gray-500">Evaluating date parameters...</td></tr>
+              <tr><td colSpan={4} className="p-8 text-center text-slate-400">Evaluating date parameters...</td></tr>
             ) : meetings.length === 0 ? (
-              <tr><td colSpan={4} className="p-8 text-center text-gray-500">No meeting bookings submitted.</td></tr>
+              <tr><td colSpan={4} className="p-8 text-center text-slate-400 border-t border-slate-100 border-dashed bg-slate-50">No meeting bookings submitted.</td></tr>
             ) : (
               meetings.map(m => (
-                <tr key={m.id} className="border-b border-white/5 hover:bg-white/[0.01]">
-                  <td className="p-4">
-                    <div className="font-bold text-white text-sm">{m.clientName}</div>
-                    <div className="font-mono text-[10px] text-gray-500 mt-0.5">{m.email}</div>
+                <tr key={m.id} className="border-b border-slate-100 hover:bg-slate-50/50 transition-colors">
+                  <td className="p-5">
+                    <div className="font-bold text-slate-800 text-sm font-display">{m.clientName}</div>
+                    <div className="font-mono font-bold text-[10px] text-slate-400 mt-1.5">{m.email}</div>
                   </td>
-                  <td className="p-4">
-                    <span className="font-bold text-gray-300 block">{m.topic}</span>
-                    <span className="text-[11px] text-gray-400 line-clamp-1 block mt-0.5">{m.message}</span>
+                  <td className="p-5">
+                    <span className="font-bold text-slate-700 block">{m.topic}</span>
+                    <span className="text-[11px] text-slate-500 line-clamp-1 block mt-1 font-medium">{m.message}</span>
                   </td>
-                  <td className="p-4 space-y-0.5 font-mono text-[11px]">
-                    <div className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5 text-gray-600" /><span>{m.date}</span></div>
-                    <div className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5 text-gray-600" /><span>{m.time} ({m.duration} mins)</span></div>
+                  <td className="p-5 space-y-1.5 font-mono text-[11px] font-bold text-slate-600">
+                    <div className="flex items-center gap-2"><Calendar className="w-3.5 h-3.5 text-slate-400" /><span>{m.date}</span></div>
+                    <div className="flex items-center gap-2"><Clock className="w-3.5 h-3.5 text-slate-400" /><span>{m.time} ({m.duration} mins)</span></div>
                   </td>
-                  <td className="p-4">
+                  <td className="p-5">
                     {m.status === 'pending' ? (
-                      <div className="flex gap-1.5">
-                        <button onClick={() => handleUpdateStatus(m.id!, m.clientName, 'accepted')} className="px-2 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 font-mono font-bold uppercase rounded border border-emerald-500/20 text-[9px]">Confirm</button>
-                        <button onClick={() => handleUpdateStatus(m.id!, m.clientName, 'rejected')} className="px-2 py-1 bg-rose-500/15 text-rose-400 font-mono font-bold uppercase rounded border border-rose-500/20 text-[9px]">Decline</button>
+                      <div className="flex gap-2">
+                        <button onClick={() => handleUpdateStatus(m.id!, m.clientName, 'accepted')} className="px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-600 font-mono font-bold uppercase rounded-lg border border-emerald-200 text-[9px] shadow-sm transition-colors">Confirm</button>
+                        <button onClick={() => handleUpdateStatus(m.id!, m.clientName, 'rejected')} className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-500 font-mono font-bold uppercase rounded-lg border border-rose-200 text-[9px] shadow-sm transition-colors">Decline</button>
                       </div>
                     ) : (
-                      <span className={`px-2 py-0.5 font-mono text-[9px] uppercase font-bold rounded border ${
-                        m.status === 'accepted' ? 'bg-emerald-500/10 border-emerald-500/15 text-emerald-400' : 'bg-gray-500/10 border-gray-550/15 text-gray-400'
+                      <span className={`px-3 py-1.5 font-mono text-[9px] uppercase font-bold rounded-lg border shadow-sm ${
+                        m.status === 'accepted' ? 'bg-emerald-50 border-emerald-200 text-emerald-600' : 'bg-slate-50 border-slate-200 text-slate-500'
                       }`}>{m.status}</span>
                     )}
                   </td>
@@ -768,44 +769,44 @@ function CmsManager({ onLogActivity }: { onLogActivity: any }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Landing Page CMS</h2>
-        <p className="text-gray-400 text-xs">Dynamically configure headers, badges, and descriptors displayed on the public landing page.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Landing Page CMS</h2>
+        <p className="text-slate-500 text-xs mt-1">Dynamically configure headers, badges, and descriptors displayed on the public landing page.</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-10">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 pb-10">
         
         {/* Hero settings */}
-        <div className="p-6 rounded-2xl border border-white/5 bg-[#050b14]/40 space-y-4">
-          <div className="pb-3 border-b border-white/5 flex justify-between items-center">
-            <span className="text-xs font-mono font-bold text-gray-400 uppercase">HERO SECTION COPY</span>
-            <Save className="w-4 h-4 text-electric cursor-pointer" onClick={() => handleSave('hero')} />
+        <div className="p-8 rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6">
+          <div className="pb-4 border-b border-slate-100 flex justify-between items-center">
+            <span className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><Layout className="w-4 h-4 text-[#4f46e5]" /> HERO SECTION COPY</span>
+            <button className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg shadow-sm transition-all" onClick={() => handleSave('hero')}><Save className="w-4 h-4 text-[#4f46e5]" /></button>
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-gray-500">MAIN HEADLINE Title</label>
-            <input type="text" value={heroHeading} onChange={e => setHeroHeading(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white" />
+          <div className="space-y-2">
+            <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">MAIN HEADLINE Title</label>
+            <input type="text" value={heroHeading} onChange={e => setHeroHeading(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-800 font-display font-bold shadow-sm focus:outline-none focus:border-[#4f46e5]" />
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-gray-500">SUBHEADLINE Description</label>
-            <textarea rows={3} value={heroSub} onChange={e => setHeroSub(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white resize-none" />
+          <div className="space-y-2">
+            <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">SUBHEADLINE Description</label>
+            <textarea rows={4} value={heroSub} onChange={e => setHeroSub(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-600 shadow-sm resize-none focus:outline-none focus:border-[#4f46e5] font-medium leading-relaxed" />
           </div>
-          <button onClick={() => handleSave('hero')} className="w-full py-2 bg-white text-navy font-bold rounded-lg text-[10px] uppercase tracking-wider">Save Hero Content</button>
+          <button onClick={() => handleSave('hero')} className="w-full py-3 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-[10px] uppercase tracking-widest shadow-md transition-all">Save Hero Content</button>
         </div>
 
         {/* About section settings */}
-        <div className="p-6 rounded-2xl border border-white/5 bg-[#050b14]/40 space-y-4">
-          <div className="pb-3 border-b border-white/5 flex justify-between items-center">
-            <span className="text-xs font-mono font-bold text-gray-400 uppercase">ABOUT US SECTION COPY</span>
-            <Save className="w-4 h-4 text-electric cursor-pointer" onClick={() => handleSave('about')} />
+        <div className="p-8 rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] space-y-6">
+          <div className="pb-4 border-b border-slate-100 flex justify-between items-center">
+            <span className="text-[11px] font-mono font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2"><FileText className="w-4 h-4 text-[#4f46e5]" /> ABOUT US SECTION COPY</span>
+            <button className="p-2 border border-slate-200 bg-white hover:bg-slate-50 rounded-lg shadow-sm transition-all" onClick={() => handleSave('about')}><Save className="w-4 h-4 text-[#4f46e5]" /></button>
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-gray-500">MAIN STORY TITLE</label>
-            <input type="text" value={aboutHeading} onChange={e => setAboutHeading(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white" />
+          <div className="space-y-2">
+            <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">MAIN STORY TITLE</label>
+            <input type="text" value={aboutHeading} onChange={e => setAboutHeading(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm text-slate-800 font-display font-bold shadow-sm focus:outline-none focus:border-[#4f46e5]" />
           </div>
-          <div className="space-y-1">
-            <label className="text-[10px] font-mono text-gray-500">CORPORATE DESCRIPTION STORY</label>
-            <textarea rows={3} value={aboutDesc} onChange={e => setAboutDesc(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white resize-none" />
+          <div className="space-y-2">
+            <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">CORPORATE DESCRIPTION STORY</label>
+            <textarea rows={4} value={aboutDesc} onChange={e => setAboutDesc(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-600 shadow-sm resize-none focus:outline-none focus:border-[#4f46e5] font-medium leading-relaxed" />
           </div>
-          <button onClick={() => handleSave('about')} className="w-full py-2 bg-white text-navy font-bold rounded-lg text-[10px] uppercase tracking-wider">Save About Content</button>
+          <button onClick={() => handleSave('about')} className="w-full py-3 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-[10px] uppercase tracking-widest shadow-md transition-all">Save About Content</button>
         </div>
 
       </div>
@@ -819,7 +820,7 @@ function CmsManager({ onLogActivity }: { onLogActivity: any }) {
 function SettingsPanel({ onLogActivity }: { onLogActivity: any }) {
   const [compName, setCompName] = useState('Code Crafters');
   const [seoKey, setSeoKey] = useState('software engineering, digital solutions');
-  const [appearanceColor, setAppearanceColor] = useState('#00E5FF');
+  const [appearanceColor, setAppearanceColor] = useState('#4f46e5');
 
   const handleSaveSettings = async () => {
     try {
@@ -839,41 +840,42 @@ function SettingsPanel({ onLogActivity }: { onLogActivity: any }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Branding Settings & Infrastructure</h2>
-        <p className="text-gray-400 text-xs">Configure meta tagging keys, corporate signatures, client login paths, and general identity properties.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Branding Settings & Infrastructure</h2>
+        <p className="text-slate-500 text-xs mt-1">Configure meta tagging keys, corporate signatures, client login paths, and general identity properties.</p>
       </div>
 
-      <div className="p-6 rounded-2xl border border-white/5 bg-[#050b14]/40 max-w-lg space-y-4 font-sans">
+      <div className="p-8 rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] max-w-xl space-y-6 font-sans">
         
-        <div className="space-y-1">
-          <label className="text-[10px] font-mono text-gray-500">COMPANY BRANDING SIGNATURE</label>
-          <input type="text" value={compName} onChange={e => setCompName(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white" />
+        <div className="space-y-2">
+          <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">COMPANY BRANDING SIGNATURE</label>
+          <input type="text" value={compName} onChange={e => setCompName(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-sm font-bold text-slate-800 shadow-sm focus:outline-none focus:border-[#4f46e5]" />
         </div>
 
-        <div className="space-y-1">
-          <label className="text-[10px] font-mono text-gray-500">SYSTEM GLOBAL META KEYPHRASES</label>
-          <input type="text" value={seoKey} onChange={e => setSeoKey(e.target.value)} className="w-full bg-[#03060f] border border-white/5 rounded-lg p-2.5 text-xs text-white" />
+        <div className="space-y-2">
+          <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">SYSTEM GLOBAL META KEYPHRASES</label>
+          <input type="text" value={seoKey} onChange={e => setSeoKey(e.target.value)} className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs text-slate-800 shadow-sm focus:outline-none focus:border-[#4f46e5]" />
         </div>
 
-        <div className="space-y-1.5 pt-2">
-          <label className="text-[10px] font-mono text-gray-500">SYSTEM PRIMARY COLOR ACCENT</label>
-          <div className="flex gap-2">
-            {['#00E5FF', '#10B981', '#6366F1', '#EC4899', '#F59E0B'].map(clr => (
+        <div className="space-y-3 pt-2">
+          <label className="text-[10px] font-mono text-slate-500 font-bold uppercase">SYSTEM PRIMARY COLOR ACCENT</label>
+          <div className="flex gap-4">
+            {['#4f46e5', '#2563eb', '#10B981', '#fbbf24', '#f43f5e'].map(clr => (
               <button 
                 key={clr} 
                 type="button" 
                 onClick={() => setAppearanceColor(clr)} 
-                className="w-10 h-10 rounded-full border border-white/20 relative cursor-pointer" 
+                className="w-12 h-12 rounded-full border-4 border-white shadow-md relative cursor-pointer hover:scale-110 transition-transform" 
                 style={{ backgroundColor: clr }}
               >
-                {appearanceColor === clr && <Check className="w-4 h-4 text-navy absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
+                {appearanceColor === clr && <Check className="w-5 h-5 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />}
               </button>
             ))}
           </div>
         </div>
 
-        <button onClick={handleSaveSettings} className="w-full py-3 bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-widest transition-all hover:bg-electric">Save Identity Credentials</button>
-
+        <div className="pt-4 mt-4 border-t border-slate-100">
+           <button onClick={handleSaveSettings} className="w-full py-3.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest transition-all shadow-md mt-4">Save Identity Credentials</button>
+        </div>
       </div>
     </div>
   );
@@ -894,37 +896,39 @@ function ActivityLogList({ logs }: { logs: ActivityLog[] }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-display font-semibold">Security Activities Log</h2>
-        <p className="text-gray-400 text-xs">Independent platform access logs. Synchronized from Firestore Security triggers.</p>
+        <h2 className="text-2xl font-display font-semibold text-slate-800">Security Activities Log</h2>
+        <p className="text-slate-500 text-xs mt-1">Independent platform access logs. Synchronized from Firestore Security triggers.</p>
       </div>
 
-      <div className="relative w-72">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+      <div className="relative w-80">
+        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
         <input
           type="text"
           placeholder="Filter security events..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="w-full bg-[#050b14]/55 border border-white/5 rounded-xl pl-9 pr-3 py-2 text-xs text-white focus:outline-none"
+          className="w-full bg-white border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] shadow-sm"
         />
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         {filtered.length === 0 ? (
-          <div className="text-center py-12 border border-dashed border-white/5 rounded-2xl text-gray-500 text-xs">No transactions tracked during this session.</div>
+          <div className="text-center py-16 border border-dashed border-slate-200 bg-slate-50 rounded-[32px] text-slate-500 text-xs shadow-sm font-medium">No transactions tracked during this session.</div>
         ) : (
           filtered.map(log => (
-            <div key={log.id} className="p-4 rounded-xl border border-white/5 bg-white/[0.01] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-              <div className="flex items-start gap-3">
-                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 mt-1 shrink-0" />
+            <div key={log.id} className="p-5 rounded-[24px] border border-slate-100/60 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.02)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-[0_4px_20px_rgba(0,0,0,0.05)] transition-shadow">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0">
+                  <Activity className="w-5 h-5 text-[#4f46e5]" />
+                </div>
                 <div>
-                  <h4 className="text-xs font-bold text-white leading-tight">{log.action}</h4>
-                  <p className="text-[10px] text-gray-500 font-mono mt-1 break-all">{log.details}</p>
+                  <h4 className="text-sm font-bold text-slate-800 leading-tight">{log.action}</h4>
+                  <p className="text-[11px] text-slate-500 font-mono mt-1.5 break-all max-w-xl font-medium">{log.details}</p>
                 </div>
               </div>
-              <div className="text-right font-mono text-[9px] text-gray-400">
-                <span className="font-bold text-gray-300 block">{log.userEmail}</span>
-                <span className="text-gray-500 block mt-0.5">
+              <div className="text-right font-mono text-[10px] text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span className="font-bold text-slate-800 block">{log.userEmail}</span>
+                <span className="text-slate-400 block mt-1">
                   {log.timestamp?.seconds 
                     ? new Date(log.timestamp.seconds * 1000).toLocaleString() 
                     : 'just now'}

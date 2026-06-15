@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShieldAlert, Sparkles, User, LayoutDashboard, LogIn } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { NAV_LINKS, COMPANY_NAME } from '../../lib/constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './FirebaseProvider';
@@ -110,13 +111,13 @@ export default function Navbar() {
               {user ? (
                 <div className="flex items-center gap-3">
                   {/* Dashboard link button */}
-                  <a 
-                    href="/admin"
+                  <Link 
+                    to="/admin"
                     className="relative text-[10px] xl:text-xs font-bold tracking-widest text-navy uppercase px-4 py-2.5 xl:px-6 xl:py-3 bg-electric hover:bg-white rounded-full transition-all duration-300 shadow-[0_4px_20px_rgba(0,240,255,0.25)] hover:shadow-[0_0_25px_rgba(0,240,255,0.55)] hover:scale-[1.03] active:scale-[0.98] overflow-hidden whitespace-nowrap flex items-center gap-2"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5" />
                     <span>Portal Dashboard</span>
-                  </a>
+                  </Link>
 
                   {/* Tiny Avatar badge */}
                   <div 
@@ -188,14 +189,14 @@ export default function Navbar() {
                   })}
                   
                   {user ? (
-                    <a
-                      href="/admin"
+                    <Link
+                      to="/admin"
                       onClick={() => setIsOpen(false)}
                       className="bg-gradient-to-r from-electric to-electric hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] text-navy font-bold py-3.5 rounded-2xl text-center text-xs tracking-wider uppercase mt-4 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
                     >
                       <LayoutDashboard className="w-4 h-4" />
                       <span>Open Dashboard</span>
-                    </a>
+                    </Link>
                   ) : (
                     <button
                       onClick={() => { setIsOpen(false); setIsAuthOpen(true); }}

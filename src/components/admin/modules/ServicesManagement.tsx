@@ -131,18 +131,17 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
   const availableIcons = ['Terminal', 'Smartphone', 'Monitor', 'Database', 'Cpu', 'Layers'];
 
   return (
-    <div className="space-y-8 text-white">
+    <div className="space-y-8 text-slate-800 font-sans pb-10">
       
-      {/* Title */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-2xl font-display font-semibold text-white">Services Configuration</h2>
-          <p className="text-gray-400 text-xs text-sans font-normal">Define pricing models, technical options, features lists, and visual icons for Code Crafters offerings.</p>
+          <h2 className="text-2xl font-display font-semibold text-slate-800">Services Configuration</h2>
+          <p className="text-slate-500 text-xs font-normal">Define pricing models, technical options, features lists, and visual icons for Code Crafters offerings.</p>
         </div>
 
         <button
           onClick={openAddForm}
-          className="px-5 py-2.5 bg-electric hover:bg-white text-navy font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-[0_4px_15px_rgba(0,240,255,0.2)] active:scale-95"
+          className="px-5 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest flex items-center gap-2 transition-all shadow-md active:scale-95"
         >
           <Plus className="w-4 h-4" />
           <span>Add Custom Service</span>
@@ -150,48 +149,46 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
       </div>
 
       {loading ? (
-        <div className="text-center py-24 text-gray-500 text-xs">
+        <div className="text-center py-24 text-slate-400 text-xs">
           Interrogating Firestore services database...
         </div>
       ) : services.length === 0 ? (
-        <div className="text-center py-24 border border-dashed border-white/5 rounded-3xl text-gray-500 text-xs">
+        <div className="text-center py-24 border border-dashed border-slate-200 bg-slate-50 rounded-[24px] text-slate-500 text-xs shadow-sm">
           No services published yet. Design some custom enterprise tiers today!
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-12">
           {services.map((srv, index) => {
             const hasFeatures = srv.features && srv.features.length > 0;
 
             return (
               <div 
                 key={srv.id}
-                className="p-6 rounded-3xl border border-white/5 bg-[#050b14]/40 hover:bg-[#071324] hover:border-white/10 transition-all flex flex-col justify-between group"
+                className="p-6 rounded-[32px] border border-slate-100/60 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.03)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)] hover:border-[#4f46e5]/20 transition-all flex flex-col justify-between group"
               >
-                <div className="space-y-4">
+                <div className="space-y-5">
                   
-                  {/* Service Headers */}
                   <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-electric/10 border border-electric/20 flex items-center justify-center text-electric">
-                        {srv.icon === 'Terminal' && <Terminal className="w-5 h-5" />}
-                        {srv.icon === 'Smartphone' && <Smartphone className="w-5 h-5" />}
-                        {srv.icon === 'Monitor' && <Monitor className="w-5 h-5" />}
-                        {srv.icon === 'Database' && <Database className="w-5 h-5" />}
-                        {srv.icon === 'Cpu' && <Cpu className="w-5 h-5" />}
-                        {srv.icon === 'Layers' && <Layers className="w-5 h-5" />}
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center text-[#4f46e5] shadow-sm">
+                        {srv.icon === 'Terminal' && <Terminal className="w-6 h-6" />}
+                        {srv.icon === 'Smartphone' && <Smartphone className="w-6 h-6" />}
+                        {srv.icon === 'Monitor' && <Monitor className="w-6 h-6" />}
+                        {srv.icon === 'Database' && <Database className="w-6 h-6" />}
+                        {srv.icon === 'Cpu' && <Cpu className="w-6 h-6" />}
+                        {srv.icon === 'Layers' && <Layers className="w-6 h-6" />}
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold font-display text-white">{srv.serviceName}</h4>
-                        <span className="text-[10px] font-mono text-amber-400 font-bold uppercase">{srv.pricing}</span>
+                        <h4 className="text-base font-bold font-display text-slate-800">{srv.serviceName}</h4>
+                        <span className="text-[11px] font-mono text-[#4f46e5] font-bold uppercase tracking-wider">{srv.pricing}</span>
                       </div>
                     </div>
 
-                    {/* Order buttons */}
-                    <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity">
+                    <div className="flex items-center gap-1.5 opacity-60 group-hover:opacity-100 transition-opacity bg-slate-50 rounded-xl p-1 border border-slate-100">
                       <button
                         onClick={() => moveService(index, 'up')}
                         disabled={index === 0}
-                        className="p-1 rounded bg-white/5 hover:bg-white/10 hover:text-electric transition-colors disabled:opacity-30.5 cursor-pointer"
+                        className="p-1.5 rounded-lg hover:bg-white hover:text-[#4f46e5] transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer shadow-sm disabled:shadow-none"
                         title="Move Up"
                       >
                         <ArrowUp className="w-3.5 h-3.5" />
@@ -199,7 +196,7 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
                       <button
                         onClick={() => moveService(index, 'down')}
                         disabled={index === services.length - 1}
-                        className="p-1 rounded bg-white/5 hover:bg-white/10 hover:text-electric transition-colors disabled:opacity-30.5 cursor-pointer"
+                        className="p-1.5 rounded-lg hover:bg-white hover:text-[#4f46e5] transition-colors disabled:opacity-30 disabled:hover:bg-transparent cursor-pointer shadow-sm disabled:shadow-none"
                         title="Move Down"
                       >
                         <ArrowDown className="w-3.5 h-3.5" />
@@ -207,18 +204,17 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-400 leading-relaxed font-sans font-normal">
+                  <p className="text-sm text-slate-500 leading-relaxed font-sans font-medium">
                     {srv.description}
                   </p>
 
-                  {/* Feature badges list */}
                   {hasFeatures && (
-                    <div className="space-y-2 border-t border-white/5 pt-4">
-                      <span className="text-[9px] font-mono font-bold text-gray-500 uppercase tracking-widest block">Scope Highlights</span>
-                      <div className="flex flex-wrap gap-1.5 pt-1">
+                    <div className="space-y-3 border-t border-slate-100 pt-5">
+                      <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block">Scope Highlights</span>
+                      <div className="flex flex-col gap-2 pt-1">
                         {srv.features.map((feat, idx) => (
-                          <span key={idx} className="bg-white/[0.02] border border-white/5 text-gray-400 text-[10px] px-2.5 py-0.5 rounded font-mono flex items-center gap-1">
-                            <Check className="w-3 h-3 text-[#00E5FF] shrink-0" />
+                          <span key={idx} className="text-slate-600 text-xs font-medium flex items-center gap-2.5">
+                            <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
                             <span>{feat}</span>
                           </span>
                         ))}
@@ -228,21 +224,20 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
 
                 </div>
 
-                {/* Service Admin Controls Footer */}
-                <div className="flex justify-end gap-2 border-t border-white/5 pt-4 mt-6">
+                <div className="flex justify-end gap-2 border-t border-slate-100 pt-5 mt-6 border-dashed">
                   <button
                     onClick={() => openEditForm(srv)}
-                    className="p-1.5 px-3 border border-white/5 bg-white/[0.01] hover:bg-white/5 text-gray-400 hover:text-white rounded-lg text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-1.5 transition-all"
+                    className="p-2 px-4 border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 rounded-xl text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-2 transition-all shadow-sm"
                   >
-                    <Edit className="w-3.5 h-3.5 text-gray-500" />
+                    <Edit className="w-3.5 h-3.5 text-slate-500" />
                     <span>Configure</span>
                   </button>
                   <button
                     onClick={() => handleDeleteService(srv)}
-                    className="p-1.5 px-3 border border-white/5 hover:border-red-500/20 hover:bg-red-500/10 text-gray-400 hover:text-red-400 rounded-lg text-[10px] uppercase font-bold tracking-wider font-mono flex items-center gap-1.5 transition-all"
+                    className="p-2 border border-slate-200 bg-white hover:bg-red-50 text-slate-400 hover:text-red-500 hover:border-red-200 rounded-xl transition-all shadow-sm"
+                    title="Delete"
                   >
-                    <Trash2 className="w-3.5 h-3.5 text-gray-500" />
-                    <span>Delete</span>
+                    <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
 
@@ -252,63 +247,62 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
         </div>
       )}
 
-      {/* Form Dialog Modal */}
       <AnimatePresence>
         {isFormOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-[#030712]/85 backdrop-blur-md" onClick={() => setIsFormOpen(false)} />
+            <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setIsFormOpen(false)} />
 
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 15 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
-              className="relative w-full max-w-lg rounded-3xl border border-white/10 bg-[#080d1a] p-6 sm:p-8 shadow-2xl z-10 space-y-6"
+              className="relative w-full max-w-xl rounded-[32px] border border-slate-200 bg-white p-6 sm:p-8 shadow-2xl z-10 space-y-6"
             >
-              <div className="flex items-center justify-between pb-4 border-b border-white/5">
-                <h3 className="text-sm font-bold uppercase tracking-wider font-mono text-white flex items-center gap-2">
-                  <Sparkles className="w-4 h-4 text-electric" />
+              <div className="flex items-center justify-between pb-5 border-b border-slate-100">
+                <h3 className="text-sm font-bold uppercase tracking-wider font-mono text-slate-800 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-[#4f46e5]" />
                   <span>{editingId ? 'Edit Service Details' : 'Configure New Service Item'}</span>
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="p-1 rounded-full border border-white/5 hover:border-white/10 hover:bg-white/5 text-gray-400 hover:text-white transition-all"
+                  className="p-2 rounded-full border border-slate-200 bg-white hover:bg-slate-50 text-slate-400 hover:text-slate-700 transition-all shadow-sm"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              <form onSubmit={handleFormSubmit} className="space-y-4 text-xs font-sans">
+              <form onSubmit={handleFormSubmit} className="space-y-5 text-sm font-sans">
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-5">
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">SERVICE NAME</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">SERVICE NAME</label>
                     <input
                       type="text"
                       required
                       value={formName}
                       onChange={(e) => setFormName(e.target.value)}
                       placeholder="UI/UX Engineering"
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">PRICING STRUCTURE</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">PRICING STRUCTURE</label>
                     <input
                       type="text"
                       required
                       value={formPricing}
                       onChange={(e) => setFormPricing(e.target.value)}
                       placeholder="e.g. $4,000 / month"
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     />
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-5">
                   <div className="space-y-1.5 w-full">
-                    <label className="text-[10px] font-mono text-gray-400 block mb-1">VISUAL ICON TEMPLATE</label>
-                    <div className="grid grid-cols-3 gap-1">
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block mb-2 uppercase">VISUAL ICON TEMPLATE</label>
+                    <div className="grid grid-cols-3 gap-2">
                       {availableIcons.map(ic => {
                         const isSel = formIcon === ic;
                         return (
@@ -316,10 +310,10 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
                             key={ic}
                             type="button"
                             onClick={() => setFormIcon(ic)}
-                            className={`py-2 text-[10px] font-mono uppercase font-bold rounded border ${
+                            className={`py-2 px-1 text-[10px] font-mono uppercase font-bold rounded-xl border transition-all ${
                               isSel 
-                                ? 'bg-electric/10 border-electric text-electric' 
-                                : 'bg-white/[0.01] border-white/5 text-gray-400 hover:text-white'
+                                ? 'bg-[#4f46e5] border-[#4f46e5] text-white shadow-md' 
+                                : 'bg-slate-50 border-slate-200 text-slate-500 hover:text-slate-800 shadow-sm'
                             }`}
                           >
                             {ic}
@@ -330,54 +324,55 @@ export default function ServicesManagement({ onLogActivity }: ServicesProps) {
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-[10px] font-mono text-gray-400 block">ORDERING INDEX</label>
+                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">ORDERING INDEX</label>
                     <input
                       type="number"
                       required
                       value={formOrderIndex}
                       onChange={(e) => setFormOrderIndex(Number(e.target.value))}
-                      className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-gray-400 block">SERVICE COGNITIVE SUMMARY</label>
+                  <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">SERVICE COGNITIVE SUMMARY</label>
                   <textarea
                     rows={3}
                     required
                     value={formDesc}
                     onChange={(e) => setFormDesc(e.target.value)}
                     placeholder="Provide a client-facing explanation on what this software service entails and how it streamlines operational friction..."
-                    className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-electric resize-none"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm resize-none"
                   />
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="text-[10px] font-mono text-gray-400 block">KEY DELIVERABLES (COMMA SEPARATED)</label>
+                  <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">KEY DELIVERABLES (COMMA SEPARATED)</label>
                   <input
                     type="text"
                     required
                     value={formFeatures}
                     onChange={(e) => setFormFeatures(e.target.value)}
                     placeholder="Custom layout, Figma wireframes, Responsive code, Tailwind"
-                    className="w-full bg-white/[0.02] border border-white/5 rounded-xl px-3 py-2.5 text-xs text-white focus:outline-none focus:border-electric"
+                    className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-3 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all shadow-sm"
                   />
                 </div>
 
-                <div className="flex gap-3 justify-end pt-4 border-t border-white/5">
+                <div className="flex gap-3 justify-end pt-5 border-t border-slate-100">
                   <button
                     type="button"
                     onClick={() => setIsFormOpen(false)}
-                    className="px-4 py-2 border border-white/5 hover:bg-white/5 rounded-xl text-gray-400 hover:text-white transition-all text-xs font-bold uppercase tracking-wider"
+                    className="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 bg-white rounded-xl text-slate-600 transition-all shadow-sm text-xs font-bold uppercase tracking-wider"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-5 py-2 bg-white hover:bg-electric text-navy font-bold rounded-xl text-xs uppercase tracking-widest transition-all shadow-[0_4px_15px_rgba(255,255,255,0.1)] active:scale-95"
+                    className="px-6 py-2.5 bg-[#4f46e5] hover:bg-[#4338ca] text-white font-bold rounded-xl text-xs uppercase tracking-widest transition-all shadow-md active:scale-95 flex items-center gap-2"
                   >
-                    Save Service Blueprint
+                     <Save className="w-4 h-4"/>
+                    Save Blueprint
                   </button>
                 </div>
 
