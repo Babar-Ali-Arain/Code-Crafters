@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'motion/react';
 import { X } from 'lucide-react';
+import { ReactNode } from 'react';
 
 export const PrivacyContent = () => (
   <>
@@ -43,7 +44,7 @@ interface LegalModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
-  content: React.ReactNode;
+  content: ReactNode;
 }
 
 export default function LegalModal({ isOpen, onClose, title, content }: LegalModalProps) {
