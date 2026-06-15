@@ -11,6 +11,7 @@ import Pricing from './components/sections/Pricing';
 import Features from './components/sections/Features';
 import WhyUs from './components/sections/WhyUs';
 import Process from './components/sections/Process';
+import Team from './components/sections/Team';
 import Testimonials from './components/sections/Testimonials';
 import FAQ from './components/sections/FAQ';
 import Contact from './components/sections/Contact';
@@ -31,6 +32,7 @@ export default function App() {
         <Pricing />
         <WhyUs />
         <Process />
+        <Team />
         <Testimonials />
         <FAQ />
         <Contact />
