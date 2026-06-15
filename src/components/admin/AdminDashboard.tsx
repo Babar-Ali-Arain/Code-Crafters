@@ -17,6 +17,7 @@ import TeamManagement from './modules/TeamManagement';
 import ProjectManagement from './modules/ProjectManagement';
 import ServicesManagement from './modules/ServicesManagement';
 import AdminPanels from './modules/AdminPanels';
+import ProfileManagement from './modules/ProfileManagement';
 import { ActivityLog } from './types';
 
 export default function AdminDashboard() {
@@ -25,7 +26,7 @@ export default function AdminDashboard() {
 
   // Sidebar toggler & current active UI tab
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'projects' | 'services' | 'clients' | 'blogs' | 'media' | 'testimonials' | 'appointments' | 'cms' | 'settings' | 'logs'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'team' | 'projects' | 'services' | 'clients' | 'blogs' | 'media' | 'testimonials' | 'appointments' | 'cms' | 'settings' | 'logs' | 'profile'>('overview');
 
   // Login form configurations for Console Access
   const [loginEmail, setLoginEmail] = useState('');
@@ -590,24 +591,28 @@ export default function AdminDashboard() {
       <main className="flex-1 flex flex-col relative z-10 min-h-screen overflow-x-hidden">
         
         {/* TOP STATUS NAVIGATION BAR */}
-        <header className="h-16 md:h-20 border-b border-slate-100 bg-white/95 backdrop-blur-lg px-4 md:px-8 flex justify-between items-center relative z-30 shrink-0 sticky top-0 shadow-sm">
+        <header className="h-16 md:h-20 border-b border-slate-100 bg-white/95 backdrop-blur-lg px-4 md:px-8 flex justify-between items-center relative z-30 shrink-0 sticky top-0 shadow-sm transition-all duration-300">
           
           <div className="flex items-center gap-3 sm:gap-4 flex-none">
             {/* Mobile Hamburger menu toggle */}
             <button 
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0FA484]/50"
+              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0FA484]/50 active:scale-95"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <h1 className="text-[10px] md:text-xs font-mono font-bold uppercase tracking-widest text-[#0FA484] hidden sm:block">Operations Console</h1>
+            {/* Logo for mobile view when sidebar might be closed */}
+            <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm block lg:hidden shrink-0">
+               <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+            </div>
+            <h1 className="text-[10px] md:text-xs font-mono font-bold uppercase tracking-widest text-[#0FA484] hidden sm:block px-1">Operations Console</h1>
           </div>
 
           {/* Operations row: Global search suggestion engine, Database export click, bell notifications panel */}
           <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end ml-4">
             
             {/* Dynamic Global suggestion search engine */}
-            <div className="relative w-full max-w-[200px] sm:max-w-xs md:max-w-md lg:w-80 group">
+            <div className="relative w-full max-w-[140px] xs:max-w-[180px] sm:max-w-xs md:max-w-md lg:w-[320px] group">
               <div className="relative">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#0FA484] transition-colors" />
                 <input 
@@ -616,8 +621,8 @@ export default function AdminDashboard() {
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                   onChange={(e) => handleQuerySearchChange(e.target.value)}
-                  placeholder="Search globally..." 
-                  className="bg-slate-50 hover:bg-slate-100/50 border border-slate-200 text-sm rounded-full pl-10 pr-4 py-2 md:py-2.5 w-full text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0FA484] focus:ring-2 focus:ring-[#0FA484]/20 focus:bg-white transition-all shadow-sm" 
+                  placeholder="Search..." 
+                  className="bg-slate-50 hover:bg-slate-100/50 border border-slate-200 text-xs sm:text-sm rounded-full pl-10 pr-4 py-2 sm:py-2.5 w-full text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0FA484] focus:ring-2 focus:ring-[#0FA484]/20 focus:bg-white transition-all shadow-sm" 
                 />
               </div>
 
@@ -719,12 +724,22 @@ export default function AdminDashboard() {
               </AnimatePresence>
             </div>
 
-            {/* Tiny console indicator color badge */}
-            <div className="hidden xl:flex items-center gap-2 pl-4 border-l border-slate-200 font-mono text-[9px] uppercase font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full ml-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
-              <span>System Online</span>
+            {/* Profile Picture & User Info in Top Nav */}
+            <div 
+              onClick={() => setActiveTab('profile')}
+              className="flex items-center gap-3 pl-3 sm:pl-5 border-l border-slate-200 ml-1 sm:ml-2 cursor-pointer hover:bg-slate-50 rounded-xl p-1 pr-2 transition-colors group"
+            >
+               <div className="hidden md:block text-right leading-tight">
+                  <h4 className="text-[11px] font-bold text-slate-800 truncate max-w-[120px] lg:max-w-[150px] group-hover:text-[#0FA484] transition-colors">{profile?.name || 'Administrator'}</h4>
+                  <span className="text-[9px] text-[#0FA484] font-mono font-bold uppercase tracking-widest">{isAdmin ? 'Admin' : 'Team Member'}</span>
+               </div>
+               <img 
+                 src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.email}`} 
+                 alt="Avatar" 
+                 className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-slate-200 shadow-sm shrink-0 group-hover:border-[#0FA484] transition-all duration-300" 
+               />
+               <ChevronDown className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0FA484] transition-colors hidden sm:block" />
             </div>
-
           </div>
 
         </header>
@@ -737,6 +752,7 @@ export default function AdminDashboard() {
             {activeTab === 'team' && <TeamManagement onLogActivity={logSystemActivity} />}
             {activeTab === 'projects' && <ProjectManagement onLogActivity={logSystemActivity} />}
             {activeTab === 'services' && <ServicesManagement onLogActivity={logSystemActivity} />}
+            {activeTab === 'profile' && <ProfileManagement onLogActivity={logSystemActivity} />}
             
             {/* Core administrative panels combined tab subview switcher */}
             {(['clients', 'blogs', 'media', 'testimonials', 'appointments', 'cms', 'settings', 'logs'] as any).includes(activeTab) && (
