@@ -590,108 +590,127 @@ export default function AdminDashboard() {
       <main className="flex-1 flex flex-col relative z-10 min-h-screen overflow-x-hidden">
         
         {/* TOP STATUS NAVIGATION BAR */}
-        <header className="h-16 border-b border-slate-100 bg-white px-6 md:px-8 flex justify-between items-center relative z-20 shrink-0">
+        <header className="h-16 md:h-20 border-b border-slate-100 bg-white/95 backdrop-blur-lg px-4 md:px-8 flex justify-between items-center relative z-30 shrink-0 sticky top-0 shadow-sm">
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4 flex-none">
             {/* Mobile Hamburger menu toggle */}
             <button 
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-xl transition-colors"
+              className="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-[#0FA484]/50"
             >
               {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
-            <h1 className="text-xs font-mono font-bold uppercase tracking-widest text-slate-400 max-sm:hidden">CODE CRAFTERS CONSOLE</h1>
+            <h1 className="text-[10px] md:text-xs font-mono font-bold uppercase tracking-widest text-[#0FA484] hidden sm:block">Operations Console</h1>
           </div>
 
           {/* Operations row: Global search suggestion engine, Database export click, bell notifications panel */}
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 flex-1 justify-end ml-4">
             
             {/* Dynamic Global suggestion search engine */}
-            <div className="relative hidden md:block">
+            <div className="relative w-full max-w-[200px] sm:max-w-xs md:max-w-md lg:w-80 group">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-[#0FA484] transition-colors" />
                 <input 
                   type="text" 
                   value={searchString}
                   onFocus={() => setSearchFocused(true)}
                   onBlur={() => setTimeout(() => setSearchFocused(false), 200)}
                   onChange={(e) => handleQuerySearchChange(e.target.value)}
-                  placeholder="Global database query search..." 
-                  className="bg-slate-50 border border-slate-200 text-xs rounded-xl pl-9 pr-4 py-2 w-72 text-slate-850 placeholder-slate-400 focus:outline-none focus:border-[#0FA484] focus:bg-white transition-all shadow-2xs" 
+                  placeholder="Search globally..." 
+                  className="bg-slate-50 hover:bg-slate-100/50 border border-slate-200 text-sm rounded-full pl-10 pr-4 py-2 md:py-2.5 w-full text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#0FA484] focus:ring-2 focus:ring-[#0FA484]/20 focus:bg-white transition-all shadow-sm" 
                 />
               </div>
 
               {/* Suggestions Flyout portal */}
               <AnimatePresence>
-                {searchFocused && searchSuggestions.length > 0 && (
+                {searchFocused && searchString.trim().length > 0 && (
                   <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="absolute top-[calc(100%+0.5rem)] right-0 left-0 bg-white border border-slate-200 rounded-2xl p-4 shadow-xl z-[100] space-y-2 text-xs max-h-80 overflow-y-auto"
+                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    className="absolute top-[calc(100%+0.75rem)] right-0 left-[-60px] sm:left-0 md:-left-12 md:w-[420px] bg-white border border-slate-200 rounded-3xl p-3 shadow-[0_20px_60px_rgba(0,0,0,0.08)] z-[100] max-h-96 overflow-y-auto"
                   >
-                    <span className="text-[9px] font-bold font-mono tracking-wider text-slate-400 uppercase block mb-1">GLOBAL QUERY MATCHES</span>
-                    {searchSuggestions.map((item, idx) => (
-                      <div 
-                        key={idx} 
-                        onClick={() => {
-                          if (item.col === 'projects') setActiveTab('projects');
-                          if (item.col === 'users') setActiveTab('team');
-                          if (item.col === 'blogs') setActiveTab('blogs');
-                          if (item.col === 'clients') setActiveTab('clients');
-                        }}
-                        className="p-2 rounded-xl border border-slate-100 hover:border-[#0FA484]/20 bg-slate-50/50 hover:bg-slate-50 cursor-pointer transition-all flex items-center justify-between text-slate-700"
-                      >
-                        <div className="truncate max-w-[170px]">
-                          <strong className="text-slate-800 block truncate">{item.title}</strong>
-                          <span className="text-[10px] text-slate-450 truncate block">{item.desc}</span>
-                        </div>
-                        <span className="text-[8px] font-mono font-bold uppercase py-0.5 px-2 rounded bg-teal-50 text-[#0FA484] shrink-0">{item.col}</span>
+                    <span className="text-[10px] font-bold font-mono tracking-wider text-slate-400 uppercase block mb-2 px-2 pt-1">Search Results</span>
+                    {searchSuggestions.length === 0 ? (
+                      <div className="p-6 text-center text-slate-500 text-xs font-medium">No matches found for "{searchString}"</div>
+                    ) : (
+                      <div className="space-y-1">
+                        {searchSuggestions.map((item, idx) => (
+                          <div 
+                            key={idx} 
+                            onClick={() => {
+                              if (item.col === 'projects') setActiveTab('projects');
+                              if (item.col === 'users') setActiveTab('team');
+                              if (item.col === 'blogs') setActiveTab('blogs');
+                              if (item.col === 'clients') setActiveTab('clients');
+                            }}
+                            className="p-3 rounded-2xl hover:bg-[#F0FDF4] cursor-pointer transition-all flex items-start gap-3 text-slate-700 group/item"
+                          >
+                            <div className="w-9 h-9 rounded-full bg-emerald-50 text-[#0FA484] flex items-center justify-center shrink-0 border border-emerald-100/50">
+                               {item.col === 'projects' ? <FolderGit2 className="w-4 h-4" /> : 
+                                item.col === 'users' ? <Users className="w-4 h-4" /> : 
+                                item.col === 'clients' ? <Award className="w-4 h-4" /> : 
+                                <MessageSquare className="w-4 h-4" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center justify-between gap-2">
+                                <strong className="text-sm text-slate-800 font-semibold truncate group-hover/item:text-[#0FA484] transition-colors">{item.title}</strong>
+                                <span className="text-[9px] font-mono font-bold uppercase py-0.5 px-2 rounded-full bg-slate-100 text-slate-500 shrink-0 group-hover/item:bg-emerald-100 group-hover/item:text-emerald-700 transition-colors">{item.col}</span>
+                              </div>
+                              <span className="text-[11px] text-slate-500 line-clamp-1 mt-0.5 font-medium">{item.desc}</span>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                    )}
                   </motion.div>
                 )}
               </AnimatePresence>
             </div>
 
             {/* Instant Excel/CSV Client DB download */}
-            <button 
-              onClick={handleCSVExport}
-              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-[#0FA484] border border-emerald-100 rounded-xl text-xs font-semibold tracking-wide cursor-pointer flex items-center gap-1.5 transition-all shadow-2xs"
-              title="Export client ledger down as Spreadsheet"
-            >
-              <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
-              <span className="hidden sm:inline">Export database</span>
-            </button>
+            <div className="hidden sm:flex items-center">
+              <button 
+                onClick={handleCSVExport}
+                className="p-2 sm:px-4 sm:py-2 bg-slate-50 hover:bg-emerald-50 text-slate-600 hover:text-[#0FA484] border border-slate-200 hover:border-[#0FA484]/30 rounded-full text-xs font-semibold tracking-wide cursor-pointer flex items-center gap-2 transition-all shadow-sm"
+                title="Export database"
+              >
+                <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
+                <span className="hidden lg:inline">Export CSV</span>
+              </button>
+            </div>
 
             {/* Notification system triggers bell */}
-            <div className="relative">
+            <div className="relative flex items-center">
               <button 
                 onClick={() => setNotifOpen(!notifOpen)}
-                className="p-2.5 bg-slate-50 border border-slate-200 rounded-full hover:bg-slate-100 transition-all relative cursor-pointer"
+                className="p-2 bg-slate-50 border border-slate-200 rounded-full hover:bg-slate-100 transition-all relative cursor-pointer focus:outline-none focus:ring-2 focus:ring-emerald-500/30 shadow-sm"
               >
-                <Bell className="w-4 h-4 text-slate-500 hover:text-slate-800" />
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-550 bg-emerald-400 absolute top-2 right-2 animate-pulse" />
+                <Bell className="w-5 h-5 text-slate-600" />
+                <span className="w-2.5 h-2.5 rounded-full bg-rose-500 border-2 border-white absolute top-0 right-0 animate-pulse" />
               </button>
 
               <AnimatePresence>
                 {notifOpen && (
                   <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="absolute top-12 right-0 bg-white border border-slate-150 rounded-3xl p-5 w-80 shadow-2xl z-50 text-xs space-y-4"
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    className="absolute top-[calc(100%+1rem)] right-0 bg-white border border-slate-200 rounded-3xl p-5 w-80 sm:w-96 shadow-[0_20px_60px_rgba(0,0,0,0.08)] z-50 text-xs space-y-4"
                   >
-                    <div className="flex justify-between items-center pb-2 border-b border-slate-100 font-mono">
-                      <span className="font-bold uppercase tracking-wider text-slate-400">UNREAD MESSAGES</span>
-                      <button onClick={() => setNotifications(prev => prev.map(n => ({...n, read: true})))} className="text-[10px] text-[#0FA484] hover:underline uppercase">Mark read</button>
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                      <span className="font-bold uppercase tracking-wider text-slate-800 text-xs font-display">Notifications</span>
+                      <button onClick={() => setNotifications(prev => prev.map(n => ({...n, read: true})))} className="text-[10px] text-[#0FA484] hover:text-[#0c856a] font-bold uppercase transition-colors">Mark all read</button>
                     </div>
-                    <div className="space-y-3">
+                    <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
                       {notifications.map(notif => (
-                        <div key={notif.id} className={`p-2.5 rounded-xl border ${notif.read ? 'border-slate-100 bg-transparent' : 'border-emerald-100 bg-emerald-50/20'} space-y-1`}>
-                          <h5 className="font-bold text-slate-850 font-sans">{notif.title}</h5>
-                          <p className="text-slate-500 text-[11px] leading-relaxed">{notif.text}</p>
-                          <span className="text-[9px] font-mono text-slate-400 block text-right">{notif.date}</span>
+                        <div key={notif.id} className={`p-4 rounded-2xl border transition-all ${notif.read ? 'border-slate-100 bg-white' : 'border-[#0FA484]/20 bg-[#F0FDF4] shadow-sm'} space-y-1.5`}>
+                          <div className="flex items-start justify-between gap-2">
+                             <h5 className={`font-bold font-sans text-sm ${notif.read ? 'text-slate-700' : 'text-[#0FA484]'}`}>{notif.title}</h5>
+                             {!notif.read && <span className="w-2 h-2 rounded-full bg-[#0FA484] shrink-0 mt-1.5" />}
+                          </div>
+                          <p className={`text-xs leading-relaxed ${notif.read ? 'text-slate-500' : 'text-slate-600'}`}>{notif.text}</p>
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-slate-400 block pt-1">{notif.date}</span>
                         </div>
                       ))}
                     </div>
@@ -701,9 +720,9 @@ export default function AdminDashboard() {
             </div>
 
             {/* Tiny console indicator color badge */}
-            <div className="flex items-center gap-2 pl-2 border-l border-slate-150 font-mono text-[9px] uppercase font-bold text-emerald-600">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)] animate-pulse" />
-              <span>Sync online</span>
+            <div className="hidden xl:flex items-center gap-2 pl-4 border-l border-slate-200 font-mono text-[9px] uppercase font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-full ml-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)] animate-pulse" />
+              <span>System Online</span>
             </div>
 
           </div>
