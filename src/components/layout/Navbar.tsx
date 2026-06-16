@@ -4,18 +4,12 @@ import { Link } from 'react-router-dom';
 import { NAV_LINKS, COMPANY_NAME } from '../../lib/constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './FirebaseProvider';
-import AuthModal from '../auth/AuthModal';
-import DashboardPortal from '../dashboard/DashboardPortal';
 
 export default function Navbar() {
   const { user, profile, isTeam } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('#home');
-
-  // Portals interactive states
-  const [isAuthOpen, setIsAuthOpen] = useState(false);
-  const [isDashboardOpen, setIsDashboardOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +63,7 @@ export default function Navbar() {
             <a href="#home" className="flex items-center gap-3 group">
               <div className="w-10 h-10 overflow-hidden rounded-full border border-white/10 group-hover:border-electric/50 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all duration-300">
                 <img 
-                  src="/logo.jpeg" 
+                  src="/logo.png" 
                   alt={COMPANY_NAME} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                   referrerPolicy="no-referrer"
@@ -112,7 +106,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-3">
                   {/* Dashboard link button */}
                   <Link 
-                    to="/admin"
+                    to="/dashboard"
                     className="relative text-[10px] xl:text-xs font-bold tracking-widest text-navy uppercase px-4 py-2.5 xl:px-6 xl:py-3 bg-electric hover:bg-white rounded-full transition-all duration-300 shadow-[0_4px_20px_rgba(0,240,255,0.25)] hover:shadow-[0_0_25px_rgba(0,240,255,0.55)] hover:scale-[1.03] active:scale-[0.98] overflow-hidden whitespace-nowrap flex items-center gap-2"
                   >
                     <LayoutDashboard className="w-3.5 h-3.5" />
@@ -121,7 +115,7 @@ export default function Navbar() {
 
                   {/* Tiny Avatar badge */}
                   <div 
-                    onClick={() => window.location.href = '/admin'}
+                    onClick={() => window.location.href = '/dashboard'}
                     className="w-10 h-10 rounded-full border border-white/10 hover:border-electric/40 overflow-hidden cursor-pointer active:scale-95 transition-all"
                   >
                     <img 
@@ -132,13 +126,13 @@ export default function Navbar() {
                   </div>
                 </div>
               ) : (
-                <button 
-                  onClick={() => setIsAuthOpen(true)}
+                <Link 
+                  to="/login"
                   className="relative text-[10px] xl:text-xs font-bold tracking-widest text-white uppercase px-4 py-2.5 xl:px-6 xl:py-3 bg-white/5 hover:bg-white hover:text-navy rounded-full border border-white/10 hover:border-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.98] overflow-hidden whitespace-nowrap flex items-center gap-2"
                 >
                   <LogIn className="w-3.5 h-3.5" />
                   <span>Portal Login</span>
-                </button>
+                </Link>
               )}
             </div>
 
@@ -190,7 +184,7 @@ export default function Navbar() {
                   
                   {user ? (
                     <Link
-                      to="/admin"
+                      to="/dashboard"
                       onClick={() => setIsOpen(false)}
                       className="bg-gradient-to-r from-electric to-electric hover:shadow-[0_0_20px_rgba(0,240,255,0.4)] text-navy font-bold py-3.5 rounded-2xl text-center text-xs tracking-wider uppercase mt-4 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
                     >
@@ -198,13 +192,14 @@ export default function Navbar() {
                       <span>Open Dashboard</span>
                     </Link>
                   ) : (
-                    <button
-                      onClick={() => { setIsOpen(false); setIsAuthOpen(true); }}
+                    <Link
+                      to="/login"
+                      onClick={() => setIsOpen(false)}
                       className="bg-white/10 hover:bg-white text-white hover:text-navy font-bold py-3.5 rounded-2xl text-center text-xs tracking-wider uppercase mt-4 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2"
                     >
                       <LogIn className="w-4 h-4" />
                       <span>Portal Login</span>
-                    </button>
+                    </Link>
                   )}
                 </div>
               </motion.div>
@@ -212,10 +207,6 @@ export default function Navbar() {
           </AnimatePresence>
         </motion.nav>
       </header>
-
-      {/* Embedded portals at layout level */}
-      <AuthModal isOpen={isAuthOpen} onClose={() => setIsAuthOpen(false)} />
-      <DashboardPortal isOpen={isDashboardOpen} onClose={() => setIsDashboardOpen(false)} />
     </>
   );
 }

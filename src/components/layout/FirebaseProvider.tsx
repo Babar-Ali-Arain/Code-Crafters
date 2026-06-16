@@ -9,7 +9,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../../lib/firebase';
 
 export interface UserProfile {
@@ -20,6 +20,12 @@ export interface UserProfile {
   role: 'admin' | 'team' | 'client';
   createdAt: any;
   updatedAt: any;
+  phone?: string;
+  github?: string;
+  twitter?: string;
+  linkedin?: string;
+  website?: string;
+  bio?: string;
 }
 
 interface AuthContextType {
@@ -93,8 +99,8 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
     const userRef = doc(db, 'users', authUser.uid);
     try {
       const snap = await getDoc(userRef);
+      const isDefaultAdmin = authUser.email?.toLowerCase() === 'babaraliarain2211@gmail.com';
       if (!snap.exists()) {
-        const isDefaultAdmin = authUser.email?.toLowerCase() === 'babaraliarain2211@gmail.com';
         const newProfile: UserProfile = {
           uid: authUser.uid,
           email: authUser.email || '',
@@ -105,6 +111,14 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
           updatedAt: serverTimestamp()
         };
         await setDoc(userRef, newProfile);
+      } else {
+        const existingData = snap.data() as UserProfile;
+        if (isDefaultAdmin && existingData.role !== 'admin') {
+          await updateDoc(userRef, {
+            role: 'admin',
+            updatedAt: serverTimestamp()
+          });
+        }
       }
     } catch (err) {
       handleFirestoreError(err, OperationType.WRITE, `users/${authUser.uid}`);
@@ -118,6 +132,9 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
       setUser(currentUser);
 
       if (currentUser) {
+        // Sync user profile first to ensure document exists
+        syncUserProfile(currentUser, currentUser.displayName || currentUser.email || 'Console Member');
+
         // Handle listening to user profile changes
         const profileRef = doc(db, 'users', currentUser.uid);
         unsubscribeProfile = onSnapshot(profileRef, (snap) => {

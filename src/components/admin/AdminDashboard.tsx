@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, ReactNode, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, Navigate } from 'react-router-dom';
 import { 
   ShieldCheck, LayoutDashboard, Users, FolderGit2, Sparkles, Terminal, LogOut, 
   Menu, X, Bell, Search, Globe, ChevronDown, Award, Calendar, FolderOpen,
@@ -52,14 +52,14 @@ export default function AdminDashboard() {
 
   // 1. Initial listener for real-time security events
   useEffect(() => {
-    if (!user) return;
+    if (!user || !isAdmin) return;
     const q = query(collection(db, 'logs'), orderBy('timestamp', 'desc'), limit(50));
     return onSnapshot(q, (snap) => {
       const list: ActivityLog[] = [];
       snap.forEach(docSnap => list.push({ id: docSnap.id, ...docSnap.data() } as ActivityLog));
       setSystemLogs(list);
     }, (err) => console.log('Read logs authorization failed or incomplete.'));
-  }, [user]);
+  }, [user, isAdmin]);
 
   // 2. Platform Audit logging method
   const logSystemActivity = async (action: string, details: string) => {
@@ -205,150 +205,17 @@ export default function AdminDashboard() {
   }, []);
 
   // Conditional Workspace view rendering based on active levels
+  // Conditional Workspace view rendering based on active levels
   // Lock workspace is unauthenticated or lack Admin / Team permissions
   if (!user) {
-    return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 relative overflow-hidden font-sans">
-        {/* Glow ambient panels */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-emerald-50 rounded-full blur-[160px] pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-blue-50 rounded-full blur-[160px] pointer-events-none" />
-
-        <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-md rounded-3xl border border-slate-150 bg-white p-6 sm:p-8 shadow-[0_12px_40px_rgba(0,0,0,0.03)] relative z-10"
-        >
-          {/* Logo header */}
-          <div className="flex flex-col items-center justify-center text-center space-y-4 mb-8">
-            <div className="w-14 h-14 overflow-hidden rounded-full border border-slate-100 shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
-              <img src="/logo.jpeg" alt="Code Crafters Logo" className="w-full h-full object-cover" />
-            </div>
-            <div>
-              <span className="text-[10px] font-mono font-bold tracking-widest text-[#0FA484] uppercase">CODE CRAFTERS COMPANY</span>
-              <h1 className="text-xl font-display font-semibold text-slate-800 tracking-wide mt-1">Platform Administrative Portal</h1>
-              <p className="text-slate-400 text-xs mt-1.5 font-sans font-normal">Authenticating admin nodes onto cluster databases.</p>
-            </div>
-          </div>
-
-          {loginError && (
-            <div className="flex gap-2.5 p-3.5 rounded-xl bg-red-50 border border-red-100 text-red-600 text-xs mb-4">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
-              <span>{loginError}</span>
-            </div>
-          )}
-
-          <form onSubmit={handleConsoleLogin} className="space-y-4 text-xs">
-            <div className="space-y-1.5">
-              <label className="text-slate-600 font-semibold">EMAIL CONSOLE NODE</label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  type="email" 
-                  required 
-                  value={loginEmail} 
-                  onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="admin@codecrafters.co" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-800 focus:outline-none focus:border-[#0FA484] focus:bg-white transition-all" 
-                />
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <label className="text-slate-600 font-semibold">SECURE CRYPTO PASSKEY</label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                <input 
-                  type="password" 
-                  required 
-                  value={loginPassword} 
-                  onChange={(e) => setLoginPassword(e.target.value)}
-                  placeholder="••••••••" 
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-slate-800 focus:outline-none focus:border-[#0FA484] focus:bg-white transition-all" 
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loginLoading}
-              className="w-full py-3.5 bg-slate-900 hover:bg-[#0FA484] text-white font-bold rounded-xl tracking-widest text-[10px] uppercase transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 flex items-center justify-center gap-1.5 cursor-pointer shadow-sm"
-            >
-              <span>{loginLoading ? 'DECRYPTING ACCESS...' : 'DECRYPT SYSTEM GATEWAYS'}</span>
-            </button>
-          </form>
-
-          {/* Divider */}
-          <div className="relative my-6 text-center">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-slate-100" />
-            </div>
-            <span className="relative bg-white px-3.5 text-[10px] text-slate-400 font-mono uppercase tracking-widest">or single sign-on</span>
-          </div>
-
-          <button 
-            type="button" 
-            onClick={handleConsoleGoogleLogin}
-            disabled={loginLoading}
-            className="w-full py-3.5 bg-white border border-slate-200 hover:border-slate-300 text-slate-700 font-sans text-[10px] uppercase font-bold rounded-xl tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer shadow-xs"
-          >
-            <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24">
-              <path fill="#EA4335" d="M12.24 10.285V14.4h6.887c-.275 1.565-1.88 4.604-6.887 4.604-4.33 0-7.859-3.58-7.859-8s3.53-8 7.859-8c2.46 0 4.105 1.025 5.047 1.926l3.227-3.11c-2.074-1.933-4.947-3.11-8.274-3.11-6.63 0-12 5.37-12 12s5.37 12 12 12c6.923 0 11.534-4.87 11.534-11.74 0-.788-.085-1.39-.19-1.885h-11.344z"/>
-            </svg>
-            <span>Google Administrative SSO</span>
-          </button>
-          
-          <div className="text-center mt-6">
-            <Link to="/" className="text-slate-400 hover:text-slate-700 transition-colors text-[10px] font-mono uppercase tracking-widest flex items-center justify-center gap-1.5">
-              <span>← Return to Public Workspace</span>
-            </Link>
-          </div>
-
-        </motion.div>
-      </div>
-    );
+    return <Navigate to="/login" replace />;
   }
 
   // Deny system workspace accesses if role checks fail
   if (!isAdmin && !isTeam) {
-    return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4 relative font-sans">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[160px] pointer-events-none" />
-        
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="w-full max-w-md bg-white border border-slate-150 rounded-3xl p-6 sm:p-8 text-center space-y-6 shadow-xl relative z-10"
-        >
-          <div className="w-14 h-14 bg-red-50 border border-red-100 rounded-2xl flex items-center justify-center text-red-500 mx-auto">
-            <ShieldAlert className="w-7 h-7" />
-          </div>
-
-          <div className="space-y-2">
-            <h2 className="text-lg font-display font-semibold text-slate-800">Console Authorization Denied</h2>
-            <p className="text-slate-500 text-xs leading-relaxed font-sans font-normal">
-              Your logged-in account profile <strong className="text-slate-800">{user.email}</strong> possesses no authorized security credentials (<strong className="text-slate-800">Admin / Team</strong> tags) for this console space.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2 pt-2">
-            <button 
-              onClick={() => signOut().then(() => navigate('/'))}
-              className="py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer shadow-xs"
-            >
-              Sign Out & Clear Session
-            </button>
-            <button 
-              onClick={() => navigate('/')}
-              className="py-3 bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 border border-slate-150 font-bold rounded-xl text-xs uppercase tracking-wider transition-all cursor-pointer"
-            >
-              Return Home
-            </button>
-          </div>
-        </motion.div>
-      </div>
-    );
+    return <Navigate to="/dashboard" replace />;
   }
+
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 flex select-none font-sans overflow-x-hidden relative">
@@ -384,7 +251,7 @@ export default function AdminDashboard() {
             {sidebarOpen ? (
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-100">
-                  <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+                  <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
                 </div>
                 <div className="leading-tight">
                   <h2 className="font-display font-semibold text-sm tracking-wide text-slate-850">Code Crafters</h2>
@@ -393,7 +260,7 @@ export default function AdminDashboard() {
               </div>
             ) : (
               <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-100">
-                <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+                <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
               </div>
             )}
           </div>
@@ -450,16 +317,18 @@ export default function AdminDashboard() {
             />
 
             {/* Nav 5: Clients Relations */}
-            <SidebarLink 
-              icon={<Award className="w-4 h-4" />} 
-              label="Client Database" 
-              active={activeTab === 'clients'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('clients');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Award className="w-4 h-4" />} 
+                label="Client Database" 
+                active={activeTab === 'clients'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('clients');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 6: Blogs */}
             <SidebarLink 
@@ -474,76 +343,88 @@ export default function AdminDashboard() {
             />
 
             {/* Nav 7: Media CDN */}
-            <SidebarLink 
-              icon={<FolderOpen className="w-4 h-4" />} 
-              label="Media Library" 
-              active={activeTab === 'media'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('media');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<FolderOpen className="w-4 h-4" />} 
+                label="Media Library" 
+                active={activeTab === 'media'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('media');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 8: Testimonials */}
-            <SidebarLink 
-              icon={<Star className="w-4 h-4" />} 
-              label="Testimonials Audit" 
-              active={activeTab === 'testimonials'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('testimonials');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Star className="w-4 h-4" />} 
+                label="Testimonials Audit" 
+                active={activeTab === 'testimonials'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('testimonials');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 9: Calendar Appointments */}
-            <SidebarLink 
-              icon={<Calendar className="w-4 h-4" />} 
-              label="Meetings Schedule" 
-              active={activeTab === 'appointments'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('appointments');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Calendar className="w-4 h-4" />} 
+                label="Meetings Schedule" 
+                active={activeTab === 'appointments'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('appointments');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 10: Landing CMS */}
-            <SidebarLink 
-              icon={<Layout className="w-4 h-4" />} 
-              label="Landing CMS Content" 
-              active={activeTab === 'cms'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('cms');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Layout className="w-4 h-4" />} 
+                label="Landing CMS Content" 
+                active={activeTab === 'cms'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('cms');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 11: Global Settings */}
-            <SidebarLink 
-              icon={<Settings className="w-4 h-4" />} 
-              label="Brand Settings" 
-              active={activeTab === 'settings'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('settings');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Settings className="w-4 h-4" />} 
+                label="Brand Settings" 
+                active={activeTab === 'settings'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('settings');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
             {/* Nav 12: Activity Logs */}
-            <SidebarLink 
-              icon={<Activity className="w-4 h-4" />} 
-              label="Audit Logs Timeline" 
-              active={activeTab === 'logs'} 
-              open={sidebarOpen}
-              onClick={() => {
-                setActiveTab('logs');
-                if (window.innerWidth < 1024) setSidebarOpen(false);
-              }} 
-            />
+            {isAdmin && (
+              <SidebarLink 
+                icon={<Activity className="w-4 h-4" />} 
+                label="Audit Logs Timeline" 
+                active={activeTab === 'logs'} 
+                open={sidebarOpen}
+                onClick={() => {
+                  setActiveTab('logs');
+                  if (window.innerWidth < 1024) setSidebarOpen(false);
+                }} 
+              />
+            )}
 
           </nav>
         </div>
@@ -603,7 +484,7 @@ export default function AdminDashboard() {
             </button>
             {/* Logo for mobile view when sidebar might be closed */}
             <div className="w-8 h-8 rounded-full overflow-hidden border border-slate-200 shadow-sm block lg:hidden shrink-0 bg-white">
-               <img src="/logo.jpeg" alt="Logo" className="w-full h-full object-cover" />
+               <img src="/logo.png" alt="Logo" className="w-full h-full object-cover" />
             </div>
             <h1 className="text-[10px] md:text-[11px] font-mono font-bold uppercase tracking-[0.2em] text-slate-400 hidden sm:block px-2">Operations <span className="text-[#0FA484]">Console</span></h1>
           </div>

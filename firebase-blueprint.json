@@ -10,6 +10,12 @@
         "name": { "type": "string", "description": "Full name of the user" },
         "photoURL": { "type": "string", "description": "Optional profile picture URL" },
         "role": { "type": "string", "enum": ["admin", "team", "client"], "description": "Access privilege role" },
+        "phone": { "type": "string", "description": "Phone number of the user" },
+        "github": { "type": "string", "description": "GitHub profile URL" },
+        "twitter": { "type": "string", "description": "Twitter/X profile URL" },
+        "linkedin": { "type": "string", "description": "LinkedIn profile URL" },
+        "website": { "type": "string", "description": "Personal/Professional website URL" },
+        "bio": { "type": "string", "description": "Short biography" },
         "createdAt": { "type": "string", "format": "date-time", "description": "Timestamp of creation" },
         "updatedAt": { "type": "string", "format": "date-time", "description": "Timestamp of last modification" }
       },

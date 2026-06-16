@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
 import Hero from './components/sections/Hero';
 import About from './components/sections/About';
@@ -20,12 +20,18 @@ import Footer from './components/layout/Footer';
 import FloatingWhatsApp from './components/layout/FloatingWhatsApp';
 import ThreeBackground from './components/layout/ThreeBackground';
 import AdminDashboard from './components/admin/AdminDashboard';
+import DashboardController from './components/dashboard/DashboardController';
+import LoginPage from './components/auth/LoginPage';
 
 export default function App() {
   return (
     <Routes>
-      {/* Protected Enterprise Admin Dashboard */}
-      <Route path="/admin" element={<AdminDashboard />} />
+      {/* Unified Login Portal */}
+      <Route path="/login" element={<LoginPage />} />
+
+      {/* Unified Dashboard Gateway */}
+      <Route path="/dashboard" element={<DashboardController />} />
+      <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
 
       {/* Public Landing Showcase */}
       <Route 

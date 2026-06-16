@@ -2,6 +2,7 @@ import { useState, useEffect, FormEvent } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth, UserProfile } from '../layout/FirebaseProvider';
 import { db } from '../../lib/firebase';
+import ProfileManagement from '../admin/modules/ProfileManagement';
 import { 
   collection, 
   query, 
@@ -33,13 +34,13 @@ import {
   ArrowUpRight, 
   Search,
   MessageSquare,
-  Sparkles
+  Sparkles,
+  User
 } from 'lucide-react';
 
 interface DashboardPortalProps {
   isOpen: boolean;
-  onClose: () => void;
-}
+  }
 
 export interface Task {
   taskId: string;
@@ -72,9 +73,9 @@ export interface Announcement {
   createdAt?: any;
 }
 
-export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProps) {
+export default function ClientDashboard() {
   const { user, profile, isAdmin, isTeam, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'users' | 'inquiries' | 'announcements'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'tasks' | 'users' | 'inquiries' | 'announcements' | 'profile'>('overview');
 
   // Firestore Real-time Data States
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -289,7 +290,7 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
 
   const handleLogoutClick = async () => {
     await signOut();
-    onClose();
+    window.location.href = '/';
   };
 
   const filteredTasks = tasks.filter(t => 
@@ -298,9 +299,7 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
   );
 
   return (
-    <AnimatePresence>
-      {isOpen && (
-        <div className="fixed inset-0 z-50 overflow-hidden flex bg-[#030712] text-white">
+    <div className="fixed inset-0 z-50 overflow-hidden flex bg-[#030712] text-white">
           
           {/* ==================== SIDEBAR ==================== */}
           <aside className="w-64 border-r border-white/5 bg-[#050b14] flex flex-col justify-between p-6 shrink-0 relative overflow-hidden hidden md:flex">
@@ -421,6 +420,20 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
                     </button>
                   </>
                 )}
+
+                <span className="text-[9px] font-mono font-bold tracking-widest text-gray-500 block px-2 pt-6 mb-3">SETTINGS</span>
+
+                <button
+                  onClick={() => setActiveTab('profile')}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold uppercase tracking-wider transition-all ${
+                    activeTab === 'profile'
+                      ? 'bg-electric/15 text-electric border border-electric/20'
+                      : 'text-gray-400 hover:text-white hover:bg-white/[0.02]'
+                  }`}
+                >
+                  <User className="w-4 h-4" />
+                  <span>My Profile</span>
+                </button>
               </nav>
             </div>
 
@@ -486,7 +499,7 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
                 )}
 
                 <button
-                  onClick={onClose}
+                  onClick={() => window.location.href = '/'}
                   className="px-4 py-2 rounded-full border border-white/10 hover:border-white/20 bg-white/5 active:scale-95 text-xs font-semibold flex items-center gap-1.5 transition-all"
                 >
                   <span>Close Portal</span>
@@ -543,6 +556,14 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
                   </button>
                 </>
               )}
+              <button
+                onClick={() => setActiveTab('profile')}
+                className={`px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold shrink-0 ${
+                  activeTab === 'profile' ? 'bg-electric text-navy' : 'text-gray-400 bg-white/5'
+                }`}
+              >
+                Profile
+              </button>
               <button
                 onClick={handleLogoutClick}
                 className="px-3 py-1.5 rounded-lg text-[10px] uppercase font-bold text-red-400 bg-red-500/10 shrink-0"
@@ -690,7 +711,7 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
                           </p>
                           <a 
                             href="#contact" 
-                            onClick={onClose} 
+                            onClick={() => window.location.href = '/'} 
                             className="text-[11px] font-mono font-bold text-white hover:text-electric flex items-center gap-1"
                           >
                             <span>Reach out to engineering</span>
@@ -1173,11 +1194,19 @@ export default function DashboardPortal({ isOpen, onClose }: DashboardPortalProp
                 </motion.div>
               )}
 
+              {/* ==================== TAB 6: PROFILE SETTINGS ==================== */}
+              {activeTab === 'profile' && (
+                <motion.div
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                >
+                  <ProfileManagement />
+                </motion.div>
+              )}
+
             </div>
           </main>
 
         </div>
-      )}
-    </AnimatePresence>
   );
 }
