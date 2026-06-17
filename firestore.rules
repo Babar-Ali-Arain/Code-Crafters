@@ -1,8 +1,128 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+  
+    // Global safety net: default deny
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
+    }
+
+    // Global helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isSignedIn() && (
+        ('email' in request.auth.token && request.auth.token.email.lower() == 'babaraliarain2211@gmail.com') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin')
+      );
+    }
+    
+    function isTeam() {
+      return isSignedIn() && (
+        ('email' in request.auth.token && request.auth.token.email.lower() == 'babaraliarain2211@gmail.com') ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && (
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'team' ||
+          get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin'
+        ))
+      );
+    }
+
+    // Collection: Users
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() && request.auth.uid == userId && (
+        request.resource.data.role == 'client' || 
+        ('email' in request.auth.token && request.auth.token.email.lower() == 'babaraliarain2211@gmail.com' && request.resource.data.role == 'admin')
+      ) && request.resource.data.uid == request.auth.uid;
+      
+      allow update: if isSignedIn() && (
+        // Self-update of profile details but not roles
+        (request.auth.uid == userId && request.resource.data.role == resource.data.role) ||
+        // Admin can update anything
+        isAdmin()
+      );
+      
+      allow delete: if isAdmin();
+    }
+
+    // Collection: Tasks
+    match /tasks/{taskId} {
+      allow read: if isSignedIn() && (
+        isTeam() || 
+        resource.data.assignedTo == request.auth.uid
+      );
+      allow create: if isAdmin();
+      allow update: if isSignedIn() && (
+        isAdmin() || 
+        (resource.data.assignedTo == request.auth.uid && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']))
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Collection: Announcements
+    match /announcements/{announcementId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Collection: Inquiries
+    match /inquiries/{inquiryId} {
+      allow create: if true;
+      allow read, update, delete: if isAdmin();
+    }
+
+    // Collection: Projects
+    match /projects/{projectId} {
+      allow read: if isTeam();
+      allow write: if isAdmin();
+    }
+
+    // Collection: Services
+    match /services/{serviceId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Collection: Clients
+    match /clients/{clientId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Collection: Blogs
+    match /blogs/{blogId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Collection: Media
+    match /media/{mediaId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Collection: Testimonials
+    match /testimonials/{testimonialId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Collection: Meetings
+    match /meetings/{meetingId} {
+      allow read: if isTeam();
+      allow write: if isTeam();
+    }
+
+    // Collection: Logs
+    match /logs/{logId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Collection: Settings
+    match /settings/{settingId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
     }
   }
 }

@@ -22,12 +22,16 @@ import ThreeBackground from './components/layout/ThreeBackground';
 import AdminDashboard from './components/admin/AdminDashboard';
 import DashboardController from './components/dashboard/DashboardController';
 import LoginPage from './components/auth/LoginPage';
+import TeamPage from './components/sections/TeamPage';
 
 export default function App() {
   return (
     <Routes>
       {/* Unified Login Portal */}
       <Route path="/login" element={<LoginPage />} />
+
+      {/* Custom Team Showcase Page Route */}
+      <Route path="/team" element={<TeamPage />} />
 
       {/* Unified Dashboard Gateway */}
       <Route path="/dashboard" element={<DashboardController />} />

@@ -1,163 +1,197 @@
-import { motion } from 'motion/react';
-import { Linkedin, Twitter, Github, Mail, Globe } from 'lucide-react';
-
-const TEAM = [
-  {
-    name: "Babar Ali",
-    role: "CEO & Founder",
-    bio: "Visionary tech leader driving business & educational growth through cutting-edge, custom digital solutions.",
-    image: "/team/babar-ali.jpeg",
-    socials: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com",
-      github: "https://github.com",
-      email: "founder.codecrafters@gmail.com"
-    }
-  },
-  {
-    name: "Adnan Ali Samo",
-    role: "Co-Founder",
-    bio: "Full-stack systems architect crafting secure, high-performance database and cloud application modules.",
-    image: "/team/adnan-ali.png",
-    socials: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com",
-      github: "https://github.com",
-      email: "adnan.codecrafters@gmail.com"
-    }
-  },
-  {
-    name: "Ali Abbas Shaikh",
-    role: "Social Media Handler",
-    bio: "Creative digital brand strategist and communicator driving Code Crafters' online engagement, professional outreach, and modern brand footprint across social media platforms.",
-    image: "/team/ali-abbas.png",
-    socials: {
-      linkedin: "https://linkedin.com",
-      twitter: "https://twitter.com",
-      email: "ali.codecrafters@gmail.com"
-    }
-  },
-  {
-    name: "Mehdi Hassan Qurashi",
-    role: "Senior Content Writer",
-    bio: "Wordsmith crafting professional documentation, UI copy, and engaging guides for complex software platforms.",
-    image: "/team/mehdi-hassan.png",
-    socials: {
-      linkedin: "https://linkedin.com",
-      email: "mehdi.codecrafters@gmail.com"
-    }
-  }
-];
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { Linkedin, Twitter, Github, Mail, ChevronDown, ChevronUp, ArrowRight, Users } from 'lucide-react';
+import { TEAM_MEMBERS, TeamMember } from '../../lib/team-data';
+import { Link } from 'react-router-dom';
 
 export default function Team() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const primaryMembers = TEAM_MEMBERS.slice(0, 4);
+  const secondaryMembers = TEAM_MEMBERS.slice(4);
+
   return (
-    <section id="team" className="py-24 relative border-t border-white/5 bg-navy-light/30">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="team" className="py-24 relative border-t border-white/5 bg-[#030712]/40 overflow-hidden">
+      {/* Premium subtle background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[40rem] h-[40rem] bg-electric/[0.02] rounded-full blur-[120px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
-        {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        {/* Header Block */}
+        <div className="text-center max-w-2xl mx-auto mb-16">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-4"
+            transition={{ duration: 0.5 }}
+            className="space-y-3"
           >
-            <h2 className="text-sm font-bold tracking-widest text-electric uppercase">Meet Our Team</h2>
-            <h3 className="text-3xl md:text-5xl font-display font-bold">The Minds Behind Code Crafters</h3>
-            <p className="text-gray-400 text-lg">
-              A highly dedicated team of industry experts passionate about helping modern organizations and schools thrive in the digital landscape.
+            <span className="text-[11px] font-mono uppercase tracking-[0.2em] text-electric bg-electric/5 border border-electric/10 px-3 py-1 rounded-full">
+              Our Core Specialists
+            </span>
+            <h2 className="text-3xl md:text-4xl font-display font-medium text-white tracking-tight pt-2">
+              The Minds Behind <span className="bg-gradient-to-r from-white via-gray-100 to-gray-400 bg-clip-text text-transparent font-semibold">Code Crafters</span>
+            </h2>
+            <p className="text-gray-400 text-sm md:text-base leading-relaxed max-w-xl mx-auto">
+              A synchronized collective of system architects, designers, strategists, and authors engineered to deploy resilient digital solutions.
             </p>
           </motion.div>
         </div>
 
-        {/* Team Grid */}
+        {/* Primary Row (4 Experts) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
-          {TEAM.map((member, index) => (
-            <motion.div
-              key={member.name}
-              initial={{ opacity: 0, scale: 0.95, y: 20 }}
-              whileInView={{ opacity: 1, scale: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.08 }}
-              className="bg-navy border border-white/10 rounded-3xl p-5 relative flex flex-col justify-between items-center text-center group hover:border-electric/40 hover:shadow-[0_0_25px_rgba(0,240,255,0.15)] transition-all duration-300"
-            >
-              {/* Background ambient light on hover */}
-              <div className="absolute inset-0 bg-gradient-to-b from-electric/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 rounded-3xl transition-opacity duration-300 pointer-events-none" />
-              
-              <div className="w-full flex flex-col items-center">
-                {/* Profile Image Frame */}
-                <div className="w-28 h-28 rounded-full p-1 bg-gradient-to-tr from-white/10 to-white/5 border border-white/10 mb-5 relative overflow-hidden group-hover:from-electric/40 group-hover:to-golden/40 group-hover:border-transparent transition-all duration-300">
-                  <div className="w-full h-full rounded-full overflow-hidden bg-navy-light relative">
-                    <img 
-                      src={member.image} 
-                      alt={member.name} 
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                      referrerPolicy="no-referrer"
-                    />
-                  </div>
-                </div>
-
-                {/* Name */}
-                <h4 className="text-lg font-bold text-white group-hover:text-electric transition-colors duration-200">
-                  {member.name}
-                </h4>
-                
-                {/* Designation / Role */}
-                <p className="text-xs font-semibold text-golden tracking-wider uppercase mt-1 mb-3">
-                  {member.role}
-                </p>
-
-                {/* Short Bio */}
-                <p className="text-gray-400 text-xs leading-relaxed mb-6">
-                  {member.bio}
-                </p>
-              </div>
-
-              {/* Social Icons */}
-              <div className="flex gap-4 relative z-10">
-                {member.socials.linkedin && (
-                  <a 
-                    href={member.socials.linkedin} 
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-electric/20 hover:border-electric/30 transition-all duration-200"
-                    title="LinkedIn"
-                  >
-                    <Linkedin className="w-4 h-4" />
-                  </a>
-                )}
-                {member.socials.twitter && (
-                  <a 
-                    href={member.socials.twitter} 
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-electric/20 hover:border-electric/30 transition-all duration-200"
-                    title="Twitter"
-                  >
-                    <Twitter className="w-4 h-4" />
-                  </a>
-                )}
-                {member.socials.github && (
-                  <a 
-                    href={member.socials.github} 
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-electric/20 hover:border-electric/30 transition-all duration-200"
-                    title="GitHub"
-                  >
-                    <Github className="w-4 h-4" />
-                  </a>
-                )}
-                {member.socials.email && (
-                  <a 
-                    href={`mailto:${member.socials.email}`} 
-                    className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-electric/20 hover:border-electric/30 transition-all duration-200"
-                    title="Email"
-                  >
-                    <Mail className="w-4 h-4" />
-                  </a>
-                )}
-              </div>
-
-            </motion.div>
+          {primaryMembers.map((member, index) => (
+            <TeamMemberCard key={member.name} member={member} index={index} />
           ))}
+        </div>
+
+        {/* Inline Extended Grid of 6 Extra Members with AnimatePresence */}
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto pt-8">
+                {secondaryMembers.map((member, index) => (
+                  <motion.div
+                    key={member.name}
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05, duration: 0.3 }}
+                  >
+                    <TeamMemberCard member={member} index={index + 4} />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Action Button Row */}
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 max-w-md mx-auto relative z-20">
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.08] text-white transition-all cursor-pointer text-xs font-semibold uppercase tracking-wider text-center"
+          >
+            <span>{isExpanded ? "Show Fewer Specialists" : "Meet Our Full Team"}</span>
+            {isExpanded ? (
+              <ChevronUp className="w-4 h-4 text-gray-400" />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-gray-400" />
+            )}
+          </button>
+
+          <Link
+            to="/team"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-electric hover:bg-electric/90 text-navy transition-all cursor-pointer text-xs font-bold uppercase tracking-wider text-center shadow-[0_4px_20px_rgba(0,240,255,0.15)]"
+          >
+            <span>Team Directory</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
         </div>
 
       </div>
     </section>
+  );
+}
+
+// Ultra-premium Minimally Crafted Single Card
+const TeamMemberCard: React.FC<{ member: TeamMember; index: number }> = ({ member, index }) => {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 15 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: (index % 4) * 0.06, duration: 0.4 }}
+      className="bg-[#0b1329]/40 border border-white/[0.06] rounded-2xl p-5 hover:border-white/20 hover:bg-[#0b1329]/75 transition-all duration-300 relative flex flex-col justify-between group overflow-hidden"
+    >
+      <div className="w-full">
+        {/* Grayscale on idle, rich color on hover aspect-square frame */}
+        <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#030712] relative border border-white/[0.05]">
+          <img 
+            src={member.image} 
+            alt={member.name} 
+            className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-[1.03] transition-all duration-500 ease-out"
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            onError={(e) => {
+              // High fidelity fallback using initials
+              e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(member.name)}&backgroundColor=020617,0f172a&fontSize=33`;
+            }}
+          />
+          {/* Subtle overlay */}
+          <div className="absolute inset-0 bg-navy/10 pointer-events-none mix-blend-multiply opacity-50 group-hover:opacity-0 transition-opacity" />
+        </div>
+
+        {/* Identity Details */}
+        <div className="mt-4 flex flex-col">
+          <h4 className="text-base font-semibold text-white tracking-tight group-hover:text-electric transition-colors duration-200 font-display">
+            {member.name}
+          </h4>
+          <span className="text-[10px] font-mono text-golden/85 uppercase tracking-widest mt-1">
+            {member.role}
+          </span>
+          <p className="text-gray-400 text-xs leading-relaxed mt-3 mb-4 line-clamp-3">
+            {member.bio}
+          </p>
+        </div>
+      </div>
+
+      {/* Minimal social links bar */}
+      <div className="flex gap-4 items-center pt-3 border-t border-white/[0.04] mt-auto">
+        {member.socials.linkedin && (
+          <a 
+            href={member.socials.linkedin} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-white transition-colors duration-200"
+            title="LinkedIn ID"
+          >
+            <Linkedin className="w-3.5 h-3.5" />
+          </a>
+        )}
+        {member.socials.twitter && (
+          <a 
+            href={member.socials.twitter} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-white transition-colors duration-200"
+            title="Twitter ID"
+          >
+            <Twitter className="w-3.5 h-3.5" />
+          </a>
+        )}
+        {member.socials.github && (
+          <a 
+            href={member.socials.github} 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-gray-500 hover:text-white transition-colors duration-200"
+            title="GitHub ID"
+          >
+            <Github className="w-3.5 h-3.5" />
+          </a>
+        )}
+        {member.socials.email && (
+          <a 
+            href={`mailto:${member.socials.email}`} 
+            className="text-gray-500 hover:text-white transition-colors duration-200"
+            title="Direct eMail"
+          >
+            <Mail className="w-3.5 h-3.5" />
+          </a>
+        )}
+        
+        {/* Simple, quiet department label */}
+        <span className="ml-auto text-[9px] font-mono text-gray-500 uppercase tracking-widest">
+          {member.department}
+        </span>
+      </div>
+
+    </motion.div>
   );
 }

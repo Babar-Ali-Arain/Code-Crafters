@@ -1,15 +1,18 @@
 import { useState, useEffect } from 'react';
 import { Menu, X, ShieldAlert, Sparkles, User, LayoutDashboard, LogIn } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, COMPANY_NAME } from '../../lib/constants';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from './FirebaseProvider';
 
 export default function Navbar() {
-  const { user, profile, isTeam } = useAuth();
+  const { user, profile } = useAuth();
+  const { pathname } = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('#home');
+
+  const isHomepage = pathname === '/';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,35 +63,60 @@ export default function Navbar() {
         >
           <div className="flex justify-between items-center w-full">
             {/* Logo & Brand */}
-            <a href="#home" className="flex items-center gap-3 group">
-              <div className="w-10 h-10 overflow-hidden rounded-full border border-white/10 group-hover:border-electric/50 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all duration-300">
-                <img 
-                  src="/logo.png" 
-                  alt={COMPANY_NAME} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
-                  referrerPolicy="no-referrer"
-                />
-              </div>
-              <span className="font-display font-medium text-lg tracking-wider bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent group-hover:from-white group-hover:to-electric transition-all duration-300">
-                {COMPANY_NAME}
-              </span>
-            </a>
+            {isHomepage ? (
+              <a href="#home" className="flex items-center gap-3 group">
+                <div className="w-10 h-10 overflow-hidden rounded-full border border-white/10 group-hover:border-electric/50 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all duration-300">
+                  <img 
+                    src="/logo.png" 
+                    alt={COMPANY_NAME} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <span className="font-display font-medium text-lg tracking-wider bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent group-hover:from-white group-hover:to-electric transition-all duration-300">
+                  {COMPANY_NAME}
+                </span>
+              </a>
+            ) : (
+              <Link to="/" className="flex items-center gap-3 group">
+                <div className="w-10 h-10 overflow-hidden rounded-full border border-white/10 group-hover:border-electric/50 group-hover:shadow-[0_0_15px_rgba(0,240,255,0.3)] transition-all duration-300">
+                  <img 
+                    src="/logo.png" 
+                    alt={COMPANY_NAME} 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                    referrerPolicy="no-referrer"
+                  />
+                </div>
+                <span className="font-display font-medium text-lg tracking-wider bg-gradient-to-r from-white via-white to-gray-300 bg-clip-text text-transparent group-hover:from-white group-hover:to-electric transition-all duration-300">
+                  {COMPANY_NAME}
+                </span>
+              </Link>
+            )}
 
             {/* Smooth Desktop Links */}
             <div className="hidden lg:flex items-center gap-4 xl:gap-6">
               <ul className="flex items-center bg-white/[0.03] border border-white/5 rounded-full p-1 px-1.5 gap-0.5 backdrop-blur-md">
                 {NAV_LINKS.map((link) => {
-                  const isActive = activeSection === link.href;
+                  const isActive = isHomepage && activeSection === link.href;
                   return (
                     <li key={link.label} className="relative">
-                      <a 
-                        href={link.href} 
-                        className={`relative z-10 block px-3 py-1.5 xl:px-4 xl:py-1.5 rounded-full text-[10px] xl:text-xs font-semibold tracking-wide uppercase transition-all duration-300 ${
-                          isActive ? 'text-navy font-bold' : 'text-gray-300 hover:text-white'
-                        }`}
-                      >
-                        {link.label}
-                      </a>
+                      {isHomepage ? (
+                        <a 
+                          href={link.href} 
+                          className={`relative z-10 block px-3 py-1.5 xl:px-4 xl:py-1.5 rounded-full text-[10px] xl:text-xs font-semibold tracking-wide uppercase transition-all duration-300 ${
+                            isActive ? 'text-navy font-bold' : 'text-gray-300 hover:text-white'
+                          }`}
+                        >
+                          {link.label}
+                        </a>
+                      ) : (
+                        <Link 
+                          to={`/${link.href}`} 
+                          className="relative z-10 block px-3 py-1.5 xl:px-4 xl:py-1.5 rounded-full text-[10px] xl:text-xs font-semibold tracking-wide uppercase transition-all duration-300 text-gray-300 hover:text-white"
+                        >
+                          {link.label}
+                        </Link>
+                      )}
                       {isActive && (
                         <motion.div
                           layoutId="activePill"
@@ -164,8 +192,8 @@ export default function Navbar() {
 
                 <div className="relative z-10 flex flex-col gap-1.5 font-sans">
                   {NAV_LINKS.map((link) => {
-                    const isActive = activeSection === link.href;
-                    return (
+                    const isActive = isHomepage && activeSection === link.href;
+                    return isHomepage ? (
                       <a
                         key={link.label}
                         href={link.href}
@@ -179,6 +207,15 @@ export default function Navbar() {
                         <span>{link.label}</span>
                         {isActive && <div className="w-2 h-2 rounded-full bg-electric shadow-[0_0_8px_rgba(0,240,255,1)]" />}
                       </a>
+                    ) : (
+                      <Link
+                        key={link.label}
+                        to={`/${link.href}`}
+                        className="px-4 py-3 rounded-2xl transition-all duration-200 text-sm font-semibold tracking-wide uppercase flex justify-between items-center text-gray-300 hover:text-white hover:bg-white/5"
+                        onClick={() => setIsOpen(false)}
+                      >
+                        <span>{link.label}</span>
+                      </Link>
                     );
                   })}
                   

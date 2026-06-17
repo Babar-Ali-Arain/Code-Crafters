@@ -87,6 +87,14 @@ async function startServer() {
     res.json({ status: "healthy" });
   });
 
+  // Catch-all route for any unhandled api endpoints - guarantees we return JSON, never HTML
+  app.all("/api/*", (req, res) => {
+    res.status(404).json({ 
+      message: `API endpoint ${req.method} ${req.path} not found or unsupported.`,
+      error: "ApiRouteNotFound"
+    });
+  });
+
   // Vite middleware for development (hot reloading and static development files asset serving)
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({

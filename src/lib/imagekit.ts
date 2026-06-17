@@ -93,23 +93,67 @@ export async function uploadFileToImageKit(
   formData.append('folder', folder);
   formData.append('privateKey', config.privateKey);
 
-  const response = await fetch('/api/upload-imagekit', {
-    method: 'POST',
-    body: formData,
-  });
+  let response: Response;
+  const maxRetries = 3;
+  let delay = 1000;
 
-  if (!response.ok) {
-    const errText = await response.text();
-    let parsedErr;
+  for (let attempt = 1;; attempt++) {
     try {
-      parsedErr = JSON.parse(errText);
-    } catch {
-      parsedErr = { message: errText };
+      response = await fetch('/api/upload-imagekit', {
+        method: 'POST',
+        body: formData,
+      });
+
+      // Verify that the response is actually valid JSON and not a raw HTML fallback
+      const contentType = response.headers.get('content-type') || '';
+      const isJson = contentType.includes('application/json');
+
+      if (!response.ok || !isJson) {
+        // Probe response text safely using clone to avoid exhausting the response body
+        const rawText = await response.clone().text();
+        const firstChars = rawText.trim().toLowerCase();
+        const hasHtmlIndicator = firstChars.startsWith('<!doctype') || firstChars.startsWith('<html') || firstChars.startsWith('<head');
+        
+        if (hasHtmlIndicator || response.status === 502 || response.status === 503 || response.status === 504) {
+          throw new Error(`Server returned HTML / Proxy temporary error (status ${response.status}). The application might be warming up.`);
+        }
+      }
+      break; // Exit loop on successful JSON-like validation
+    } catch (err: any) {
+      if (attempt >= maxRetries) {
+        throw new Error(`ImageKit secure upload server unreachable after ${maxRetries} compilation attempts: ${err.message || 'System reload'}. Please verify the Operations Panel is active and try again.`);
+      }
+      console.warn(`[ImageKit Retry] Fetch attempt ${attempt}/${maxRetries} met an issue: ${err.message || err}. Retrying in ${delay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, delay));
+      delay *= 1.5;
     }
-    throw new Error(parsedErr?.message || `ImageKit Upload Failed with status ${response.status}`);
   }
 
-  const result = await response.json();
+  const contentType = response.headers.get('content-type') || '';
+  const isJson = contentType.includes('application/json');
+
+  if (!response.ok) {
+    if (isJson) {
+      const parsedErr = await response.json();
+      throw new Error(parsedErr?.message || `ImageKit Upload Failed with status ${response.status}`);
+    } else {
+      const errText = await response.text();
+      throw new Error(errText || `ImageKit Upload Failed with status ${response.status}`);
+    }
+  }
+
+  if (!isJson) {
+    const textBody = await response.text();
+    throw new Error(`Unexpected non-JSON response from upload server: ${textBody.slice(0, 100)}`);
+  }
+
+  let result;
+  try {
+    result = await response.json();
+  } catch (jsonErr: any) {
+    throw new Error(`Failed to parse server upload response as JSON: ${jsonErr.message}`);
+  }
+
   return {
     fileId: result.fileId,
     name: result.name,
