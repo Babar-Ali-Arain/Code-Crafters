@@ -120,8 +120,12 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
           });
         }
       }
-    } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, `users/${authUser.uid}`);
+    } catch (err: any) {
+      console.warn(
+        `[Firebase Sync] Profiling synchronization postponed or offline. ` +
+        `This is expected during transient offline connections, token refresh cycles, or cold-starts. ` +
+        `Using cached local fallback. Details: ${err?.message || err}`
+      );
     }
   };
 

@@ -1,14 +1,57 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Linkedin, Twitter, Github, Mail, ChevronDown, ChevronUp, ArrowRight, Users } from 'lucide-react';
 import { TEAM_MEMBERS, TeamMember } from '../../lib/team-data';
 import { Link } from 'react-router-dom';
+import { db } from '../../lib/firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 export default function Team() {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [liveMembers, setLiveMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const primaryMembers = TEAM_MEMBERS.slice(0, 4);
-  const secondaryMembers = TEAM_MEMBERS.slice(4);
+  // Fetch Team members from firestore in real time, fallback to static TEAM_MEMBERS
+  useEffect(() => {
+    const q = query(collection(db, 'team'), orderBy('order', 'asc'));
+    const unsub = onSnapshot(q, (snap) => {
+      if (snap.empty) {
+        setLiveMembers(TEAM_MEMBERS);
+      } else {
+        const list: TeamMember[] = [];
+        snap.forEach((docSnap) => {
+          const data = docSnap.data();
+          list.push({
+            name: data.name || '',
+            role: data.role || '',
+            department: data.department || 'Engineering',
+            bio: data.bio || '',
+            image: data.image || '',
+            socials: {
+              linkedin: data.socials?.linkedin || '',
+              twitter: data.socials?.twitter || '',
+              github: data.socials?.github || '',
+              email: data.socials?.email || ''
+            },
+            skills: data.skills || [],
+            focus: data.focus || '',
+            experience: data.experience || ''
+          });
+        });
+        setLiveMembers(list);
+      }
+      setLoading(false);
+    }, (err) => {
+      console.warn('Firestore team read non-authorized or inactive, fallback to local team data:', err);
+      setLiveMembers(TEAM_MEMBERS);
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, []);
+
+  const primaryMembers = liveMembers.slice(0, 4);
+  const secondaryMembers = liveMembers.slice(4);
 
   return (
     <section id="team" className="py-24 relative border-t border-white/5 bg-[#030712]/40 overflow-hidden">
@@ -47,7 +90,7 @@ export default function Team() {
 
         {/* Inline Extended Grid of 6 Extra Members with AnimatePresence */}
         <AnimatePresence>
-          {isExpanded && (
+          {isExpanded && secondaryMembers.length > 0 && (
             <motion.div
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
@@ -73,17 +116,19 @@ export default function Team() {
 
         {/* Action Button Row */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-12 max-w-md mx-auto relative z-20">
-          <button
-            onClick={() => setIsExpanded(!isExpanded)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.08] text-white transition-all cursor-pointer text-xs font-semibold uppercase tracking-wider text-center"
-          >
-            <span>{isExpanded ? "Show Fewer Specialists" : "Meet Our Full Team"}</span>
-            {isExpanded ? (
-              <ChevronUp className="w-4 h-4 text-gray-400" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-gray-400" />
-            )}
-          </button>
+          {secondaryMembers.length > 0 && (
+            <button
+              onClick={() => setIsExpanded(!isExpanded)}
+              className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/[0.08] text-white transition-all cursor-pointer text-xs font-semibold uppercase tracking-wider text-center"
+            >
+              <span>{isExpanded ? "Show Fewer Specialists" : "Meet Our Full Team"}</span>
+              {isExpanded ? (
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              ) : (
+                <ChevronDown className="w-4 h-4 text-gray-400" />
+              )}
+            </button>
+          )}
 
           <Link
             to="/team"
@@ -143,7 +188,7 @@ const TeamMemberCard: React.FC<{ member: TeamMember; index: number }> = ({ membe
 
       {/* Minimal social links bar */}
       <div className="flex gap-4 items-center pt-3 border-t border-white/[0.04] mt-auto">
-        {member.socials.linkedin && (
+        {member.socials?.linkedin && (
           <a 
             href={member.socials.linkedin} 
             target="_blank" 
@@ -154,7 +199,7 @@ const TeamMemberCard: React.FC<{ member: TeamMember; index: number }> = ({ membe
             <Linkedin className="w-3.5 h-3.5" />
           </a>
         )}
-        {member.socials.twitter && (
+        {member.socials?.twitter && (
           <a 
             href={member.socials.twitter} 
             target="_blank" 
@@ -165,7 +210,7 @@ const TeamMemberCard: React.FC<{ member: TeamMember; index: number }> = ({ membe
             <Twitter className="w-3.5 h-3.5" />
           </a>
         )}
-        {member.socials.github && (
+        {member.socials?.github && (
           <a 
             href={member.socials.github} 
             target="_blank" 
@@ -176,7 +221,7 @@ const TeamMemberCard: React.FC<{ member: TeamMember; index: number }> = ({ membe
             <Github className="w-3.5 h-3.5" />
           </a>
         )}
-        {member.socials.email && (
+        {member.socials?.email && (
           <a 
             href={`mailto:${member.socials.email}`} 
             className="text-gray-500 hover:text-white transition-colors duration-200"

@@ -14,24 +14,67 @@ import { TEAM_MEMBERS, TeamMember } from '../../lib/team-data';
 import Navbar from '../layout/Navbar';
 import Footer from '../layout/Footer';
 import ThreeBackground from '../layout/ThreeBackground';
+import { db } from '../../lib/firebase';
+import { collection, onSnapshot, query, orderBy } from 'firebase/firestore';
 
 export default function TeamPage() {
   const [activeTab, setActiveTab] = useState<'All' | 'Leadership' | 'Engineering' | 'Design' | 'Strategy'>('All');
+  const [liveMembers, setLiveMembers] = useState<TeamMember[]>([]);
+  const [loading, setLoading] = useState(true);
   
   // Smooth scroll to top when page is mounted
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const filteredMembers = TEAM_MEMBERS.filter((m) => {
+  // Fetch from firestore
+  useEffect(() => {
+    const q = query(collection(db, 'team'), orderBy('order', 'asc'));
+    const unsub = onSnapshot(q, (snap) => {
+      if (snap.empty) {
+        setLiveMembers(TEAM_MEMBERS);
+      } else {
+        const list: TeamMember[] = [];
+        snap.forEach((docSnap) => {
+          const data = docSnap.data();
+          list.push({
+            name: data.name || '',
+            role: data.role || '',
+            department: data.department || 'Engineering',
+            bio: data.bio || '',
+            image: data.image || '',
+            socials: {
+              linkedin: data.socials?.linkedin || '',
+              twitter: data.socials?.twitter || '',
+              github: data.socials?.github || '',
+              email: data.socials?.email || ''
+            },
+            skills: data.skills || [],
+            focus: data.focus || '',
+            experience: data.experience || ''
+          });
+        });
+        setLiveMembers(list);
+      }
+      setLoading(false);
+    }, (err) => {
+      console.warn('Firestore team read fallback to static TEAM_MEMBERS:', err);
+      setLiveMembers(TEAM_MEMBERS);
+      setLoading(false);
+    });
+
+    return () => unsub();
+  }, []);
+
+  const filteredMembers = liveMembers.filter((m) => {
     if (activeTab === 'All') return true;
     return m.department === activeTab;
   });
 
   // Calculate statistics
-  const totalSpecialists = TEAM_MEMBERS.length;
-  const leadCount = TEAM_MEMBERS.filter(m => m.department === 'Leadership').length;
-  const devCount = TEAM_MEMBERS.filter(m => m.department === 'Engineering').length;
+  const totalSpecialists = liveMembers.length;
+  const leadCount = liveMembers.filter(m => m.department === 'Leadership').length;
+  const devCount = liveMembers.filter(m => m.department === 'Engineering').length;
 
   return (
     <div className="min-h-screen text-white font-sans selection:bg-electric/30 selection:text-white overflow-x-hidden relative bg-[#020617]">
@@ -162,13 +205,13 @@ export default function TeamPage() {
                     {/* Optional experience badge */}
                     {member.experience && (
                       <span className="inline-flex items-center gap-1 text-[9px] font-mono text-gray-500 mt-2">
-                        <Award className="w-3 h-3 text-electric/70" />
+                        <Award className="w-3.5 h-3.5 text-electric/70" />
                         <span>Tenure: {member.experience}</span>
                       </span>
                     )}
 
                     {/* Bio */}
-                    <p className="text-[#94a3b8] text-xs leading-relaxed mt-4 mb-4">
+                    <p className="text-[#94a3b8] text-xs leading-relaxed mt-4 mb-4 line-clamp-4">
                       {member.bio}
                     </p>
                   </div>
@@ -191,7 +234,7 @@ export default function TeamPage() {
                 {/* Card footer block */}
                 <div className="pt-4 border-t border-white/[0.04] flex items-center justify-between mt-auto">
                   <div className="flex gap-4">
-                    {member.socials.linkedin && (
+                    {member.socials?.linkedin && (
                       <a 
                         href={member.socials.linkedin} 
                         target="_blank" 
@@ -202,7 +245,7 @@ export default function TeamPage() {
                         <Linkedin className="w-3.5 h-3.5" />
                       </a>
                     )}
-                    {member.socials.twitter && (
+                    {member.socials?.twitter && (
                       <a 
                         href={member.socials.twitter} 
                         target="_blank" 
@@ -213,7 +256,7 @@ export default function TeamPage() {
                         <Twitter className="w-3.5 h-3.5" />
                       </a>
                     )}
-                    {member.socials.github && (
+                    {member.socials?.github && (
                       <a 
                         href={member.socials.github} 
                         target="_blank" 
@@ -224,7 +267,7 @@ export default function TeamPage() {
                         <Github className="w-3.5 h-3.5" />
                       </a>
                     )}
-                    {member.socials.email && (
+                    {member.socials?.email && (
                       <a 
                         href={`mailto:${member.socials.email}`} 
                         className="text-gray-500 hover:text-white transition-colors duration-200"

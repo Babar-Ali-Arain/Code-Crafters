@@ -124,5 +124,11 @@ service cloud.firestore {
       allow read: if isSignedIn();
       allow write: if isAdmin();
     }
+
+    // Collection: Team Members
+    match /team/{memberId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
   }
 }
