@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Menu, X, ShieldAlert, Sparkles, User, LayoutDashboard, LogIn,
   Home, Info, Briefcase, Layers, Users, Workflow, Mail, ArrowRight,
-  ShieldCheck, HelpCircle, PhoneCall
+  ShieldCheck, HelpCircle, PhoneCall, ChevronDown, Cpu, Globe, Smartphone, Cloud
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { NAV_LINKS, COMPANY_NAME } from '../../lib/constants';
@@ -13,10 +13,10 @@ import { useAuth } from './FirebaseProvider';
 const LINK_ICONS: Record<string, React.ReactNode> = {
   '#home': <Home className="w-3.5 h-3.5" />,
   '#about': <Info className="w-3.5 h-3.5" />,
-  '#services': <Briefcase className="w-3.5 h-3.5" />,
+  '/services': <Briefcase className="w-3.5 h-3.5" />,
   '#features': <Sparkles className="w-3.5 h-3.5" />,
   '#packages': <Layers className="w-3.5 h-3.5" />,
-  '#team': <Users className="w-3.5 h-3.5" />,
+  '/team': <Users className="w-3.5 h-3.5" />,
   '#process': <Workflow className="w-3.5 h-3.5" />,
   '#contact': <Mail className="w-3.5 h-3.5" />,
 };
@@ -24,10 +24,10 @@ const LINK_ICONS: Record<string, React.ReactNode> = {
 const LINK_SUBTITLES: Record<string, string> = {
   '#home': 'Main Entrance',
   '#about': 'Our DNA & Story',
-  '#services': 'What We Master',
+  '/services': 'Interactive Estimator',
   '#features': 'Premium Tech Capabilities',
   '#packages': 'Affordable Pricing Models',
-  '#team': 'Meet the Engineers',
+  '/team': 'Meet the Engineers',
   '#process': 'How We Orchestrate',
   '#contact': 'Connect with Us Now',
 };
@@ -38,6 +38,7 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('#home');
+  const [isServicesDropdownOpen, setIsServicesDropdownOpen] = useState(false);
 
   const isHomepage = pathname === '/';
 
@@ -61,12 +62,17 @@ export default function Navbar() {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 15);
 
-      // Track active section along viewport offsets to highlight navigation links
+      // Scroll highlighting is active ONLY on the homepage for local hash sections
+      if (!isHomepage) return;
+
       const scrollPosition = window.scrollY + 140;
       const sections = NAV_LINKS.map(link => link.href.substring(1));
       
       let currentSection = '#home';
       for (const sectionId of sections) {
+        // Skip team and services hash since they have dedicated pages
+        if (sectionId === 'services' || sectionId === 'team') continue;
+
         const el = document.getElementById(sectionId);
         if (el) {
           const top = el.offsetTop;
@@ -82,7 +88,18 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [isHomepage]);
+
+  // Dedicated helper to check active visual states for both pages and scrolling sections
+  const isLinkActive = (linkHref: string, label: string) => {
+    if (label === 'Services') {
+      return pathname === '/services';
+    }
+    if (label === 'Team') {
+      return pathname === '/team';
+    }
+    return isHomepage && activeSection === linkHref;
+  };
 
   return (
     <>
@@ -105,11 +122,11 @@ export default function Navbar() {
           }}
         >
           {/* Subtle neon glowing accent stripe across the top of scrolled navigation bar */}
-          <div className={`absolute top-0 left-12 right-12 h-[1px] bg-gradient-to-r from-transparent via-electric/40 to-transparent transition-opacity duration-500 pointer-events-none ${
+          <div className={`absolute top-0 left-12 right-12 h-[1px] bg-gradient-to-r from-transparent via-[#00F0FF]/40 to-transparent transition-opacity duration-500 pointer-events-none ${
             isScrolled ? 'opacity-100' : 'opacity-0'
           }`} />
 
-          <div className="flex justify-between items-center w-full">
+          <div className="flex justify-between items-center w-full bg-transparent">
             {/* Logo & Brand Identity */}
             <Link 
               to="/" 
@@ -120,22 +137,21 @@ export default function Navbar() {
               }}
               className="flex items-center gap-2.5 sm:gap-3 group cursor-pointer"
             >
-              <div className="w-9 h-9 sm:w-10 sm:h-10 overflow-hidden rounded-full border border-white/10 bg-navy/80 group-hover:border-electric/50 group-hover:shadow-[0_0_18px_rgba(0,240,255,0.35)] active:scale-95 transition-all duration-300 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 overflow-hidden rounded-full border border-white/10 bg-navy/80 group-hover:border-[#00F0FF]/50 group-hover:shadow-[0_0_18px_rgba(0,240,255,0.35)] active:scale-95 transition-all duration-300 flex items-center justify-center shrink-0">
                 <img 
                   src="/logo.png" 
                   alt={COMPANY_NAME} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
                   referrerPolicy="no-referrer"
                   onError={(e) => {
-                    // Fallback avatar in case local file logo is missing
+                    // Fallback visual signal in case local file logo is missing
                     e.currentTarget.style.display = 'none';
                   }}
                 />
-                {/* Logo text letter fallback */}
-                <span className="text-[14px] font-display font-bold text-electric select-none group-hover:animate-pulse">CC</span>
+                <span className="text-[14px] font-display font-black text-electric select-none group-hover:animate-pulse">CC</span>
               </div>
-              <div className="flex flex-col">
-                <span className="font-display font-bold text-sm sm:text-base tracking-wider bg-gradient-to-r from-white via-white to-slate-200 bg-clip-text text-transparent group-hover:from-white group-hover:to-electric transition-all duration-300">
+              <div className="flex flex-col text-left">
+                <span className="font-display font-medium text-sm sm:text-base tracking-wider bg-gradient-to-r from-white via-white to-slate-200 bg-clip-text text-transparent group-hover:from-white group-hover:to-electric transition-all duration-300">
                   {COMPANY_NAME}
                 </span>
                 <span className="hidden sm:inline-block text-[8px] sm:text-[9px] font-mono tracking-widest text-[#00F0FF]/60 group-hover:text-white/60 transition-colors uppercase">
@@ -148,15 +164,48 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-5 xl:gap-6">
               <ul className="flex items-center bg-white/[0.02] border border-white/5 rounded-full p-1 gap-0.5 backdrop-blur-md">
                 {NAV_LINKS.map((link) => {
-                  const isActive = isHomepage && activeSection === link.href;
+                  const isServices = link.label === 'Services';
+                  const isTeam = link.label === 'Team';
+                  const linkPath = isServices ? '/services' : isTeam ? '/team' : link.href;
+                  const isActive = isLinkActive(link.href, link.label);
+
                   return (
-                    <li key={link.label} className="relative">
-                      {isHomepage ? (
+                    <li 
+                      key={link.label} 
+                      className="relative block"
+                      onMouseEnter={() => {
+                        if (isServices) setIsServicesDropdownOpen(true);
+                      }}
+                      onMouseLeave={() => {
+                        if (isServices) setIsServicesDropdownOpen(false);
+                      }}
+                    >
+                      {isServices || isTeam ? (
+                        <Link 
+                          to={linkPath} 
+                          className={`relative z-10 flex items-center gap-1 px-3.5 py-1.5 xl:px-4 xl:py-2 rounded-full text-[10px] xl:text-xs font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
+                            isActive 
+                              ? 'text-navy font-extrabold' 
+                              : 'text-slate-300 hover:text-white hover:bg-white/[0.03]'
+                          }`}
+                        >
+                          <span>{link.label}</span>
+                          {isServices && (
+                            <motion.span
+                              animate={{ rotate: isServicesDropdownOpen ? 180 : 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="inline-block"
+                            >
+                              <ChevronDown className="w-3 h-3 text-slate-400" />
+                            </motion.span>
+                          )}
+                        </Link>
+                      ) : isHomepage ? (
                         <a 
-                          href={link.href} 
+                          href={linkPath} 
                           className={`relative z-10 block px-3.5 py-1.5 xl:px-4 xl:py-2 rounded-full text-[10px] xl:text-xs font-bold tracking-wider uppercase transition-all duration-300 cursor-pointer ${
                             isActive 
-                              ? 'text-navy' 
+                              ? 'text-navy font-extrabold' 
                               : 'text-slate-300 hover:text-white hover:bg-white/[0.03]'
                           }`}
                         >
@@ -164,7 +213,7 @@ export default function Navbar() {
                         </a>
                       ) : (
                         <Link 
-                          to={`/${link.href}`} 
+                          to={`/${linkPath}`} 
                           className="relative z-10 block px-3.5 py-1.5 xl:px-4 xl:py-2 rounded-full text-[10px] xl:text-xs font-bold tracking-wider uppercase transition-all duration-200 hover:text-white hover:bg-white/[0.03] text-slate-300"
                         >
                           {link.label}
@@ -176,8 +225,105 @@ export default function Navbar() {
                         <motion.div
                           layoutId="activePill"
                           className="absolute inset-0 bg-electric rounded-full z-0 shadow-[0_0_15px_rgba(0,240,255,0.45)]"
+                          style={{ backgroundColor: '#00F0FF' }}
                           transition={{ type: 'spring', stiffness: 380, damping: 28 }}
                         />
+                      )}
+
+                      {/* Micro interaction Hover Dropdown Portal */}
+                      {isServices && (
+                        <AnimatePresence>
+                          {isServicesDropdownOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                              animate={{ opacity: 1, y: 0, scale: 1 }}
+                              exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                              transition={{ duration: 0.18, ease: 'easeOut' }}
+                              className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-[490px] bg-[#030712] border border-white/10 rounded-2xl p-5 shadow-2xl backdrop-blur-3xl z-50 text-left pointer-events-auto"
+                              style={{
+                                background: 'linear-gradient(135deg, rgba(8, 15, 30, 0.97) 0%, rgba(3, 7, 18, 0.99) 100%)',
+                              }}
+                            >
+                              <div className="absolute top-0 left-12 right-12 h-[1px] bg-gradient-to-r from-transparent via-electric/50 to-transparent" />
+                              
+                              <p className="text-[9px] font-mono tracking-widest text-[#00F0FF]/80 font-bold uppercase mb-3 mr-2 border-b border-white/[0.05] pb-1.5">
+                                Featured Digital Capabilities
+                              </p>
+
+                              <div className="grid grid-cols-2 gap-2 mt-2">
+                                <Link
+                                  to="/services"
+                                  className="p-3 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all flex items-start gap-2.5 group cursor-pointer"
+                                  onClick={() => setIsServicesDropdownOpen(false)}
+                                >
+                                  <div className="p-1.5 rounded-lg bg-[#00F0FF]/15 text-electric shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                    <Cpu className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-xs font-bold text-slate-100 group-hover:text-electric transition-colors">Portals & ERPs</span>
+                                    <span className="text-[9px] text-slate-400 mt-0.5 leading-tight">Advanced management portals with custom dashboards.</span>
+                                  </div>
+                                </Link>
+
+                                <Link
+                                  to="/services"
+                                  className="p-3 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all flex items-start gap-2.5 group cursor-pointer"
+                                  onClick={() => setIsServicesDropdownOpen(false)}
+                                >
+                                  <div className="p-1.5 rounded-lg bg-[#00F0FF]/15 text-electric shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                    <Globe className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-xs font-bold text-slate-100 group-hover:text-electric transition-colors">Website Engineering</span>
+                                    <span className="text-[9px] text-slate-400 mt-0.5 leading-tight">Hyper-optimized React and SEO custom layouts.</span>
+                                  </div>
+                                </Link>
+
+                                <Link
+                                  to="/services"
+                                  className="p-3 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all flex items-start gap-2.5 group cursor-pointer"
+                                  onClick={() => setIsServicesDropdownOpen(false)}
+                                >
+                                  <div className="p-1.5 rounded-lg bg-[#00F0FF]/15 text-electric shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                    <Smartphone className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-xs font-bold text-slate-100 group-hover:text-electric transition-colors">Mobile Applications</span>
+                                    <span className="text-[9px] text-slate-400 mt-0.5 leading-tight">Stateful native systems for iOS and Android.</span>
+                                  </div>
+                                </Link>
+
+                                <Link
+                                  to="/services"
+                                  className="p-3 rounded-xl bg-white/[0.01] hover:bg-white/[0.03] border border-white/5 hover:border-white/10 transition-all flex items-start gap-2.5 group cursor-pointer"
+                                  onClick={() => setIsServicesDropdownOpen(false)}
+                                >
+                                  <div className="p-1.5 rounded-lg bg-[#00F0FF]/15 text-electric shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                    <Cloud className="w-4 h-4" />
+                                  </div>
+                                  <div className="flex flex-col text-left">
+                                    <span className="text-xs font-bold text-slate-100 group-hover:text-electric transition-colors">Cloud Deployments</span>
+                                    <span className="text-[9px] text-slate-400 mt-0.5 leading-tight">Secure serverless infrastructure with real-time Firestore.</span>
+                                  </div>
+                                </Link>
+                              </div>
+
+                              {/* Interactive Dropdown footer banner */}
+                              <div className="mt-4 pt-3.5 border-t border-white/[0.04] flex items-center justify-between text-[10px] font-mono">
+                                <span className="text-slate-500">Fully Automated Timeline</span>
+                                <Link
+                                  to="/services"
+                                  className="text-electric hover:text-white flex items-center gap-1 transition-colors font-bold"
+                                  onClick={() => setIsServicesDropdownOpen(false)}
+                                >
+                                  Try Budget Configurator Tool
+                                  <ArrowRight className="w-3.5 h-3.5" />
+                                </Link>
+                              </div>
+
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
                       )}
                     </li>
                   );
@@ -206,7 +352,7 @@ export default function Navbar() {
                   {/* High fidelity round Avatar with state signal */}
                   <div 
                     onClick={() => window.location.href = '/dashboard'}
-                    className="w-8 h-8 rounded-full border border-white/20 hover:border-electric/50 overflow-hidden relative cursor-pointer active:scale-90 transition-all shadow-inner shrink-0"
+                    className="w-8 h-8 rounded-full border border-white/20 hover:border-[#00F0FF]/55 overflow-hidden relative cursor-pointer active:scale-90 transition-all shadow-inner shrink-0"
                     title="Open administrative dashboard"
                   >
                     <img 
@@ -229,12 +375,12 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Mobile Touch & Trigger Button (Touch targets at least 44px) */}
+            {/* Mobile Touch & Trigger Button */}
             <div className="flex items-center gap-2 lg:hidden">
               {user && (
                 <Link 
                   to="/dashboard"
-                  className="w-9 h-9 rounded-full border-2 border-electric/40 overflow-hidden active:scale-90 transition-all flex items-center justify-center relative cursor-pointer"
+                  className="w-9 h-9 rounded-full border-2 border-electric/40 overflow-hidden active:scale-90 transition-all flex items-center justify-center relative cursor-pointer shrink-0"
                   title="Administrative Console"
                 >
                   <img 
@@ -248,7 +394,7 @@ export default function Navbar() {
               )}
 
               <button 
-                className="w-11 h-11 rounded-full flex items-center justify-center border border-white/10 hover:border-electric/40 bg-white/[0.04] text-white active:scale-95 transition-all duration-200 cursor-pointer" 
+                className="w-11 h-11 rounded-full flex items-center justify-center border border-white/10 hover:border-electric/40 bg-white/[0.04] text-white active:scale-95 transition-all duration-200 cursor-pointer shrink-0" 
                 onClick={() => setIsOpen(!isOpen)}
                 aria-label="Toggle navigation menu"
               >
@@ -261,7 +407,6 @@ export default function Navbar() {
           <AnimatePresence>
             {isOpen && (
               <>
-                {/* Click outside target shroud background to automatically collapse drawer menu */}
                 <div 
                   className="fixed inset-0 top-[100px] left-0 right-0 bottom-0 bg-transparent pointer-events-auto z-40"
                   onClick={() => setIsOpen(false)}
@@ -274,28 +419,63 @@ export default function Navbar() {
                   transition={{ type: 'spring', stiffness: 350, damping: 25 }}
                   className="absolute top-[calc(100%+0.65rem)] left-0 right-0 p-5 rounded-[28px] border border-white/10 bg-navy/98 backdrop-blur-3xl flex flex-col gap-3 shadow-2xl lg:hidden overflow-hidden pointer-events-auto z-50 mt-1"
                   style={{
-                    background: 'linear-gradient(135deg, rgba(3, 7, 18, 0.96) 0%, rgba(8, 15, 28, 0.98) 100%)',
+                    background: 'linear-gradient(135deg, rgba(3, 7, 18, 0.97) 0%, rgba(8, 15, 28, 0.99) 100%)',
                   }}
                 >
-                  {/* Glowing graphic ambient details in behind background */}
-                  <div className="absolute -top-16 -right-16 w-36 h-36 bg-electric/15 rounded-full blur-3xl pointer-events-none" />
+                  <div className="absolute -top-16 -right-16 w-36 h-36 bg-[#00F0FF]/15 rounded-full blur-3xl pointer-events-none" />
                   <div className="absolute -bottom-16 -left-16 w-36 h-36 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
                   <div className="relative z-10 flex flex-col gap-1.5 font-sans">
-                    <p className="text-[9px] font-mono tracking-widest text-[#00F0FF]/60 font-bold uppercase px-3 pb-1 border-b border-white/5 mb-1.5">
+                    <p className="text-[9px] font-mono tracking-widest text-[#00F0FF]/60 font-bold uppercase px-3 pb-1 border-b border-white/5 mb-1.5 text-left">
                       Main Navigation Directory
                     </p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-[340px] overflow-y-auto pr-1">
                       {NAV_LINKS.map((link) => {
-                        const isActive = isHomepage && activeSection === link.href;
-                        const linkIcon = LINK_ICONS[link.href] || <HelpCircle className="w-3.5 h-3.5" />;
-                        const linkSubtitle = LINK_SUBTITLES[link.href] || 'Navigate here';
+                        const isServices = link.label === 'Services';
+                        const isTeam = link.label === 'Team';
+                        const linkPath = isServices ? '/services' : isTeam ? '/team' : link.href;
+                        const isActive = isLinkActive(link.href, link.label);
 
-                        return isHomepage ? (
+                        const linkIcon = LINK_ICONS[isServices ? '/services' : isTeam ? '/team' : link.href] || <HelpCircle className="w-3.5 h-3.5" />;
+                        const linkSubtitle = LINK_SUBTITLES[isServices ? '/services' : isTeam ? '/team' : link.href] || 'Navigate here';
+
+                        return isServices || isTeam ? (
+                          <Link
+                            key={link.label}
+                            to={linkPath}
+                            className={`group flex items-center justify-between p-3 rounded-2xl border transition-all duration-200 cursor-pointer ${
+                              isActive
+                                ? 'bg-[#00F0FF]/10 border-electric/30 text-white shadow-[0_4px_15px_rgba(0,240,255,0.06)]'
+                                : 'bg-white/[0.01] border-white/5 text-slate-300 hover:text-white hover:bg-white/[0.03] hover:border-white/10'
+                            }`}
+                            onClick={() => setIsOpen(false)}
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-xl transition-all ${
+                                isActive 
+                                  ? 'bg-[#00F0FF]/15 text-electric' 
+                                  : 'bg-white/[0.04] text-slate-400 group-hover:text-white'
+                              }`}>
+                                {linkIcon}
+                              </div>
+                              <div className="flex flex-col text-left">
+                                <span className={`text-xs font-bold ${isActive ? 'text-electric' : 'text-slate-200'}`}>
+                                  {link.label}
+                                </span>
+                                <span className="text-[9px] text-slate-400 leading-none mt-1">
+                                  {linkSubtitle}
+                                </span>
+                              </div>
+                            </div>
+                            <ArrowRight className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                              isActive ? 'text-electric translate-x-px' : 'text-slate-600 group-hover:text-slate-400'
+                            }`} />
+                          </Link>
+                        ) : isHomepage ? (
                           <a
                             key={link.label}
-                            href={link.href}
+                            href={linkPath}
                             className={`group flex items-center justify-between p-3 rounded-2xl border transition-all duration-250 cursor-pointer ${
                               isActive
                                 ? 'bg-electric/10 border-electric/30 text-white shadow-[0_4px_15px_rgba(0,240,255,0.06)]'
@@ -328,7 +508,7 @@ export default function Navbar() {
                         ) : (
                           <Link
                             key={link.label}
-                            to={`/${link.href}`}
+                            to={`/${linkPath}`}
                             className="group flex items-center justify-between p-3 rounded-2xl border bg-white/[0.01] border-white/5 text-slate-300 hover:text-white hover:bg-white/[0.03] hover:border-white/10 transition-all duration-200 cursor-pointer"
                             onClick={() => setIsOpen(false)}
                           >
@@ -353,7 +533,7 @@ export default function Navbar() {
                     
                     {/* User profile details with CTA */}
                     {user ? (
-                      <div className="mt-4 pt-3.5 border-t border-white/5 space-y-3.5">
+                      <div className="mt-4 pt-4 border-t border-white/5 space-y-3.5">
                         <div className="flex items-center gap-3 px-3">
                           <img 
                             src={profile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(profile?.name || 'Dev')}`} 
@@ -371,7 +551,7 @@ export default function Navbar() {
                         <Link
                           to="/dashboard"
                           onClick={() => setIsOpen(false)}
-                          className="w-full bg-gradient-to-r from-electric to-electric/90 hover:shadow-[0_4px_20px_rgba(0,240,255,0.4)] text-navy font-extrabold py-3.5 px-4 rounded-xl text-center text-xs tracking-widest uppercase transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                          className="w-full bg-gradient-to-r from-[#00F0FF] to-cyan-500 hover:shadow-[0_4px_20px_rgba(0,240,255,0.4)] text-navy font-extrabold py-3.5 px-4 rounded-xl text-center text-xs tracking-widest uppercase transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                         >
                           <LayoutDashboard className="w-4 h-4" />
                           <span>Administrative portal</span>

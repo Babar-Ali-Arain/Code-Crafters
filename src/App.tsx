@@ -23,6 +23,7 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import DashboardController from './components/dashboard/DashboardController';
 import LoginPage from './components/auth/LoginPage';
 import TeamPage from './components/sections/TeamPage';
+import ServicesPage from './components/sections/ServicesPage';
 
 export default function App() {
   return (
@@ -32,6 +33,9 @@ export default function App() {
 
       {/* Custom Team Showcase Page Route */}
       <Route path="/team" element={<TeamPage />} />
+
+      {/* Custom Services Dedicated Page Route */}
+      <Route path="/services" element={<ServicesPage />} />
 
       {/* Unified Dashboard Gateway */}
       <Route path="/dashboard" element={<DashboardController />} />
