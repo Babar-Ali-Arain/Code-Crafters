@@ -12,6 +12,8 @@ import {
 } from 'firebase/firestore';
 import { UserProfile } from '../../layout/FirebaseProvider';
 import { TEAM_MEMBERS, TeamMember } from '../../../lib/team-data';
+import ImageEditor from './ImageEditor';
+import { UploadCloud, Link as LinkIcon } from 'lucide-react';
 
 interface TeamManagementProps {
   onLogActivity: (action: string, details: string) => void;
@@ -54,6 +56,7 @@ export default function TeamManagement({ onLogActivity }: TeamManagementProps) {
   const [formGithub, setFormGithub] = useState('');
   const [formTwitter, setFormTwitter] = useState('');
   const [formImage, setFormImage] = useState('');
+  const [imageMode, setImageMode] = useState<'upload' | 'url'>('upload');
   
   // Public Team specific fields
   const [formDepartment, setFormDepartment] = useState<'Leadership' | 'Engineering' | 'Design' | 'Strategy'>('Engineering');
@@ -159,6 +162,7 @@ export default function TeamManagement({ onLogActivity }: TeamManagementProps) {
     // Auto-generate some fancy initial avatar seed
     const seed = Math.random().toString(36).substring(7);
     setFormImage(`https://api.dicebear.com/7.x/initials/svg?seed=${seed}&backgroundColor=0f172a,1e293b&textColor=38bdf8`);
+    setImageMode('url');
     setIsFormOpen(true);
   };
 
@@ -177,13 +181,17 @@ export default function TeamManagement({ onLogActivity }: TeamManagementProps) {
       setFormRole(item.role || 'team');
       setFormDesignation(item.designation || 'Senior Software Engineer');
       setFormPhone(item.phone || '');
-      setFormImage(item.photoURL || '');
+      const img = item.photoURL || '';
+      setFormImage(img);
+      setImageMode(img.startsWith('data:image/') ? 'upload' : 'url');
     } else {
       setFormDepartment(item.department || 'Engineering');
       setFormDesignation(item.role || 'Senior Software Engineer'); // Role is Designation
       setFormFocus(item.focus || '');
       setFormExperience(item.experience || '');
-      setFormImage(item.image || '');
+      const img = item.image || '';
+      setFormImage(img);
+      setImageMode(img.startsWith('data:image/') ? 'upload' : 'url');
     }
     
     setIsFormOpen(true);
@@ -846,24 +854,100 @@ export default function TeamManagement({ onLogActivity }: TeamManagementProps) {
               <form onSubmit={handleFormSubmit} className="space-y-5 text-sm font-sans">
                 
                 {/* Image Input Selection */}
-                <div className="flex items-center gap-5 p-5 rounded-2xl border border-slate-200 bg-slate-50/50 shadow-xs">
-                  <div className="w-16 h-16 rounded-[18px] overflow-hidden border border-slate-200 bg-white shadow-sm flex items-center justify-center">
-                    {formImage ? (
-                      <img src={formImage} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <ImageIcon className="w-6 h-6 text-slate-300" />
+                <div id="image-setting bg-card-panel" className="space-y-3.5 p-5 rounded-3xl border border-slate-200 bg-slate-50/30">
+                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div className="flex items-center gap-2">
+                      <ImageIcon className="w-4 h-4 text-[#4f46e5]" />
+                      <span className="text-xs font-bold text-slate-700 font-display">Staff & Team Photo Directory Setup</span>
+                    </div>
+
+                    {formImage && formImage.startsWith('data:image/') && (
+                      <span className="text-[9px] font-mono font-bold uppercase bg-emerald-50 text-emerald-700 px-2 py-0.5 rounded-md border border-emerald-100 shadow-xs flex items-center gap-1 animate-pulse">
+                        <Check className="w-3 h-3 text-emerald-500" />
+                        Custom Crop Loaded
+                      </span>
                     )}
                   </div>
-                  <div className="space-y-2 flex-1">
-                    <label className="text-[10px] font-mono text-slate-500 font-bold block uppercase">Avatar Image URL / Seed Path</label>
-                    <input
-                      type="text"
-                      value={formImage}
-                      onChange={(e) => setFormImage(e.target.value)}
-                      placeholder="Dicebear SVG seed code or remote static url link"
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-2 focus:ring-[#4f46e5]/20 transition-all font-mono shadow-xs"
-                    />
+
+                  {/* Toggle Mode */}
+                  <div className="flex p-1 bg-slate-100/80 rounded-xl max-w-sm gap-1 border border-slate-200/50">
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('upload')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                        imageMode === 'upload'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      <UploadCloud className="w-3.5 h-3.5" />
+                      Local Picture Upload
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setImageMode('url')}
+                      className={`flex-1 py-1.5 px-3 rounded-lg text-[10px] font-mono font-bold uppercase transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                        imageMode === 'url'
+                          ? 'bg-white text-indigo-700 shadow-xs'
+                          : 'text-slate-500 hover:text-slate-800'
+                      }`}
+                    >
+                      <LinkIcon className="w-3.5 h-3.5" />
+                      Dynamic Placeholder URL
+                    </button>
                   </div>
+
+                  {/* Content Switcher */}
+                  {imageMode === 'upload' ? (
+                    <div className="space-y-4 p-1 bg-white border border-slate-200/60 rounded-2xl shadow-xs">
+                      <ImageEditor 
+                        initialImageUrl={formImage}
+                        onImageCropped={(base64) => {
+                          setFormImage(base64);
+                        }}
+                      />
+                      {formImage && (
+                        <div className="flex items-center gap-3.5 p-3 rounded-xl bg-indigo-50/40 border border-indigo-100 mt-2">
+                          <img 
+                            src={formImage} 
+                            alt="Cropped Preview" 
+                            className="w-11 h-11 rounded-xl object-cover border border-slate-300 shadow-xs" 
+                          />
+                          <div>
+                            <p className="text-[10px] font-semibold text-indigo-950">Cropped Output Final Preview</p>
+                            <p className="text-[9px] text-slate-400 font-mono mt-0.5">Will be uploaded to database document</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-start gap-4 p-4 rounded-2xl border border-slate-200 bg-white shadow-xs">
+                      <div className="w-14 h-14 rounded-xl overflow-hidden border border-slate-200 bg-slate-50 shadow-xs flex items-center justify-center shrink-0">
+                        {formImage ? (
+                          <img 
+                            src={formImage} 
+                            alt="URL Preview" 
+                            className="w-full h-full object-cover" 
+                            onError={(e) => {
+                              e.currentTarget.src = `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(formName || 'R')}`;
+                            }}
+                          />
+                        ) : (
+                          <ImageIcon className="w-5 h-5 text-slate-300" />
+                        )}
+                      </div>
+                      <div className="space-y-1.5 flex-1">
+                        <label className="text-[9px] font-mono font-bold text-slate-500 block uppercase">Network Location / Avatar Seed String</label>
+                        <input
+                          type="text"
+                          value={formImage}
+                          onChange={(e) => setFormImage(e.target.value)}
+                          placeholder="https://example.com/avatar.png or Dicebear seed code"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#4f46e5] focus:ring-1 focus:ring-[#4f46e5]/20 font-mono"
+                        />
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Shared Identity Fields */}

@@ -16,4 +16,43 @@
 body {
   background-color: var(--color-navy);
   color: white;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
+
+/* Premium micro-interactions: High-end custom cyan selection theme */
+::selection {
+  background-color: rgba(0, 240, 255, 0.25);
+  color: #00F0FF;
+}
+
+::-moz-selection {
+  background-color: rgba(0, 240, 255, 0.25);
+  color: #00F0FF;
+}
+
+/* Custom elegant, translucent scrollbar styles - matches both light and dark modes flawlessly */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.3); /* Slate-450 blend */
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.5); /* Slate-450 medium hover highlight */
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+

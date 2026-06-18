@@ -2,11 +2,11 @@ import { useState, FormEvent, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useAuth } from '../layout/FirebaseProvider';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Eye, EyeOff, Check, AlertCircle, User, Mail, Lock } from 'lucide-react';
+import { ChevronLeft, Eye, EyeOff, Check, AlertCircle, User, Mail, Lock, Copy, ExternalLink } from 'lucide-react';
 import { COMPANY_NAME } from '../../lib/constants';
 
 export default function LoginPage() {
-  const { signInWithGoogle, signInWithEmail, signUpWithEmail, user } = useAuth();
+  const { signInWithGoogle, signInWithEmail, signUpWithEmail, sendPasswordReset, user } = useAuth();
   const navigate = useNavigate();
 
   const [isSignUp, setIsSignUp] = useState(false);
@@ -14,7 +14,10 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState('');
+  const [successMsg, setSuccessMsg] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showRegisterSuggestion, setShowRegisterSuggestion] = useState(false);
+  const [domainCopied, setDomainCopied] = useState(false);
   
   const [showPassword, setShowPassword] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -29,6 +32,8 @@ export default function LoginPage() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccessMsg('');
+    setShowRegisterSuggestion(false);
     
     if (isSignUp && !agreedToTerms) {
       setError('You must agree to the Terms of Service to create an account.');
@@ -56,6 +61,9 @@ export default function LoginPage() {
       let errMsg = err.message || 'An authentication error occurred';
       if (errMsg.includes('auth/invalid-credential')) {
         errMsg = 'Invalid email or password credentials.';
+        if (!isSignUp) {
+          setShowRegisterSuggestion(true);
+        }
       } else if (errMsg.includes('auth/email-already-in-use')) {
         errMsg = 'This email is already registered.';
       } else if (errMsg.includes('auth/weak-password')) {
@@ -76,6 +84,25 @@ export default function LoginPage() {
     } catch (err: any) {
       console.error(err);
       setError(err.message || 'Failed to sign in with Google');
+      setLoading(false);
+    }
+  };
+
+  const handleForgetPassword = async () => {
+    setError('');
+    setSuccessMsg('');
+    if (!email) {
+      setError('Please enter your email address first so we can send you a password reset link.');
+      return;
+    }
+    setLoading(true);
+    try {
+      await sendPasswordReset(email);
+      setSuccessMsg(`A password reset link has been successfully sent to ${email}. Please check your inbox.`);
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Failed to send password reset email. Please verify if the email is registered.');
+    } finally {
       setLoading(false);
     }
   };
@@ -212,15 +239,122 @@ export default function LoginPage() {
               </p>
             </div>
 
+            {/* Success Callout */}
+            {successMsg && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-emerald-950/40 border border-emerald-500/30 text-emerald-400 text-xs mb-6 shadow-lg shadow-emerald-950/20"
+              >
+                <Check className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
+                <span className="leading-relaxed">{successMsg}</span>
+              </motion.div>
+            )}
+
             {/* Error Callout */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-start gap-2.5 p-3.5 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-400 text-xs mb-6 shadow-lg shadow-red-950/20"
+                className="flex flex-col gap-3 p-4 rounded-2xl bg-red-950/40 border border-red-500/30 text-red-200 text-xs mb-6 shadow-lg shadow-red-950/20"
               >
-                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-500" />
-                <span className="leading-relaxed">{error}</span>
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-red-400" />
+                  <span className="leading-relaxed font-medium">{error}</span>
+                </div>
+
+                {/* Specific details and steps for Firebase 'unauthorized-domain' error */}
+                {(error.toLowerCase().includes('unauthorized-domain') || error.toLowerCase().includes('auth/unauthorized-domain')) && (
+                  <div className="mt-2 pt-3 border-t border-red-500/10 space-y-3 text-slate-300">
+                    <p className="font-semibold text-white uppercase tracking-wider text-[10px] text-red-400">
+                      🛠️ HOW TO AUTHORIZE THIS DOMAIN:
+                    </p>
+                    <p className="leading-relaxed">
+                      This preview/deployed environment runs on a secure domain that is not yet authorized in your Firebase Project Console. Follow these quick steps to authorize it:
+                    </p>
+                    
+                    <div className="bg-[#030616]/90 p-3 rounded-xl border border-white/5 space-y-2">
+                      <div className="flex justify-between items-center text-[11px]">
+                        <span className="text-slate-400 font-mono">Your Current Domain:</span>
+                        <span className="text-[#00F0FF] font-mono font-bold select-all">
+                          {window.location.hostname}
+                        </span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            await navigator.clipboard.writeText(window.location.hostname);
+                            setDomainCopied(true);
+                            setTimeout(() => setDomainCopied(false), 2000);
+                          } catch (err) {
+                            console.error('Clipboard copy failed:', err);
+                          }
+                        }}
+                        className="w-full flex items-center justify-center gap-1.5 py-1.5 px-3 bg-[#00F0FF]/10 text-[#00F0FF] rounded-lg border border-[#00F0FF]/20 text-[10px] font-bold hover:bg-[#00F0FF]/20 active:scale-[0.99] transition-all cursor-pointer"
+                      >
+                        <Copy className="w-3.5 h-3.5" />
+                        {domainCopied ? 'Copied to Clipboard!' : 'Copy Domain Address'}
+                      </button>
+                    </div>
+
+                    <ol className="list-decimal list-inside space-y-1.5 pl-1 text-[11px] leading-relaxed text-slate-400">
+                      <li>
+                        Open your <a href="https://console.firebase.google.com/" target="_blank" rel="noopener noreferrer" className="text-[#00F0FF] hover:underline inline-flex items-center gap-0.5">Firebase Console <ExternalLink className="w-3 h-3" /></a>
+                      </li>
+                      <li>
+                        Go to <strong className="text-white">Authentication</strong> &gt; <strong className="text-white">Settings</strong> tab.
+                      </li>
+                      <li>
+                        Select <strong className="text-white">Authorized domains</strong> from the left sidebar column (or Authorized Domains card list).
+                      </li>
+                      <li>
+                        Click <strong className="text-white">Add domain</strong> and paste the copied domain.
+                      </li>
+                    </ol>
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {/* Registration Suggestion Banner */}
+            {showRegisterSuggestion && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-4 rounded-2xl bg-indigo-950/50 border border-[#00F0FF]/30 text-[#00F0FF] text-xs mb-6 space-y-3.5 shadow-xl shadow-cyan-950/20"
+              >
+                <div className="flex items-start gap-2.5">
+                  <AlertCircle className="w-4 h-4 shrink-0 mt-0.5 text-[#00F0FF]" />
+                  <span className="leading-relaxed">
+                    <strong>New to Code Crafters?</strong> If you haven't created an account yet, you can register as a new user with this email and password immediately.
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    setError('');
+                    setLoading(true);
+                    setShowRegisterSuggestion(false);
+                    try {
+                      const extractedName = email.split('@')[0] || 'User';
+                      await signUpWithEmail(email, extractedName, password);
+                      navigate('/dashboard', { replace: true });
+                    } catch (err: any) {
+                      console.error('Registration suggestion failed:', err);
+                      // Fallback to manual SignUp Mode
+                      setIsSignUp(true);
+                      setAgreedToTerms(true);
+                      setName(email.split('@')[0]);
+                      setError(err.message || 'Auto-registration failed. Please register manually via the Sign Up tab.');
+                    } finally {
+                      setLoading(false);
+                    }
+                  }}
+                  className="w-full py-2.5 bg-[#00F0FF] hover:bg-[#00D8E6] text-[#020514] font-bold rounded-xl transition-all active:scale-[0.99] cursor-pointer text-center"
+                >
+                  Register Account Instantly
+                </button>
               </motion.div>
             )}
 
@@ -325,7 +459,11 @@ export default function LoginPage() {
                 </button>
                 
                 {!isSignUp && (
-                  <button type="button" className="text-[11px] font-semibold text-[#00F0FF] hover:underline transition-all">
+                  <button 
+                    type="button" 
+                    onClick={handleForgetPassword}
+                    className="text-[11px] font-semibold text-[#00F0FF] hover:underline transition-all cursor-pointer"
+                  >
                     Forget password?
                   </button>
                 )}

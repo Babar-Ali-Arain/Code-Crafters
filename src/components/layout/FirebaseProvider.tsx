@@ -7,7 +7,8 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
-  updateProfile
+  updateProfile,
+  sendPasswordResetEmail
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, onSnapshot } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../../lib/firebase';
@@ -37,6 +38,7 @@ interface AuthContextType {
   signInWithGoogle: () => Promise<void>;
   signUpWithEmail: (email: string, name: string, pass: string) => Promise<void>;
   signInWithEmail: (email: string, pass: string) => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -77,8 +79,32 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
   const signInWithEmail = async (email: string, pass: string) => {
     try {
       await signInWithEmailAndPassword(auth, email, pass);
-    } catch (err) {
-      console.error('Email Sign In Error:', err);
+    } catch (err: any) {
+      console.warn('Initial Sign In failed, trying auto-registration fallback...', err);
+      // Catch either invalid-credential or user-not-found / invalid-password
+      const isInvalidCred = err.code === 'auth/invalid-credential' || 
+                            err.code === 'auth/user-not-found' ||
+                            err.message?.includes('invalid-credential') || 
+                            err.message?.includes('user-not-found');
+      
+      if (isInvalidCred) {
+        try {
+          // Attempt to register the user automatically
+          const name = email.split('@')[0] || 'User';
+          const result = await createUserWithEmailAndPassword(auth, email, pass);
+          await updateProfile(result.user, { displayName: name });
+          await syncUserProfile(result.user, name);
+          return; // Success! Auto-registered and signed in.
+        } catch (signUpErr: any) {
+          // If the sign-up fails because email is already in use, it means the password they entered was wrong!
+          if (signUpErr.code === 'auth/email-already-in-use' || signUpErr.message?.includes('email-already-in-use')) {
+            // Throw the original invalid-credential error since the account exists but password was wrong
+            throw err;
+          }
+          // Otherwise throw the sign-up error or original error
+          throw signUpErr;
+        }
+      }
       throw err;
     }
   };
@@ -90,6 +116,16 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
       setProfile(null);
     } catch (err) {
       console.error('Sign Out Error:', err);
+      throw err;
+    }
+  };
+
+  // Send Password Reset Email
+  const sendPasswordReset = async (email: string) => {
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (err) {
+      console.error('Password Reset Error:', err);
       throw err;
     }
   };
@@ -182,6 +218,7 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
       signInWithGoogle,
       signUpWithEmail,
       signInWithEmail,
+      sendPasswordReset,
       signOut
     }}>
       {children}

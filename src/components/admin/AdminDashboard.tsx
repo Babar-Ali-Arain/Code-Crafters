@@ -5,7 +5,7 @@ import {
   ShieldCheck, LayoutDashboard, Users, FolderGit2, Sparkles, Terminal, LogOut, 
   Menu, X, Bell, Search, Globe, ChevronDown, Award, Calendar, FolderOpen,
   MessageSquare, Sliders, Activity, Mail, Lock, AlertCircle, RefreshCw, FileSpreadsheet,
-  ShieldAlert, Star, Layout, Settings
+  ShieldAlert, Star, Layout, Settings, ArrowLeft, ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../layout/FirebaseProvider';
 import { db } from '../../lib/firebase';
@@ -136,7 +136,11 @@ export default function AdminDashboard() {
       await signInWithEmail(loginEmail, loginPassword);
     } catch (err: any) {
       console.error(err);
-      setLoginError(err.message || 'Credentials rejected by security cluster.');
+      let errMsg = err.message || 'Credentials rejected by security cluster.';
+      if (errMsg.includes('auth/invalid-credential')) {
+        errMsg = 'Invalid email or password credentials.';
+      }
+      setLoginError(errMsg);
     } finally {
       setLoginLoading(false);
     }
@@ -268,6 +272,20 @@ export default function AdminDashboard() {
           {/* Navigation Links list */}
           <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto min-h-0">
             
+            {/* Nav Back to Live Website */}
+            <div className={`mb-4 pb-4 border-b border-slate-150 flex ${sidebarOpen ? 'px-2' : 'justify-center'}`}>
+              <Link 
+                to="/"
+                className={`flex items-center gap-2.5 py-2.5 px-3.5 bg-indigo-50 hover:bg-indigo-100/80 text-indigo-700 border border-indigo-100 rounded-xl transition-all font-semibold text-xs shadow-3xs cursor-pointer ${
+                  sidebarOpen ? 'w-full' : 'w-10 h-10 justify-center rounded-full p-0 shrink-0'
+                }`}
+                title="Exit administrative console and return to public website"
+              >
+                <ArrowLeft className="w-4 h-4 text-indigo-600 shrink-0" />
+                {sidebarOpen && <span className="font-sans">Return to Website</span>}
+              </Link>
+            </div>
+
             {/* Nav 1: Overview */}
             <SidebarLink 
               icon={<LayoutDashboard className="w-4 h-4" />} 
